@@ -7,7 +7,7 @@ const Header = () => {
         <p className="text-sm font-semibold text-gray-900 sm:text-base">{siteConfig.brand}</p>
         <a
           href={`tel:${siteConfig.phone}`}
-          className="rounded-full bg-black px-4 py-2 text-sm font-semibold text-white transition hover:bg-gray-800"
+          className="rounded-full bg-gray-900 px-4 py-2 text-sm font-semibold text-white shadow-lg transition duration-300 hover:scale-105 hover:bg-blue-900"
         >
           今すぐ電話
         </a>

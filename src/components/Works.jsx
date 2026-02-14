@@ -2,12 +2,13 @@ import { siteConfig } from "../data/siteConfig";
 
 const Works = () => {
   return (
-    <section className="py-14 sm:py-20">
+    <section className="py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <h2 className="mb-8 text-2xl font-bold text-gray-900 sm:text-3xl">施工実績</h2>
+        <h2 className="mb-3 text-3xl font-bold text-gray-900 sm:text-4xl">施工実績</h2>
+        <div className="mb-10 h-1 w-20 rounded-full bg-blue-900" />
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {siteConfig.works.map((w, index) => (
-            <div key={`${w.comment}-${index}`} className="bg-white rounded-2xl shadow-md overflow-hidden">
+            <div key={`${w.comment}-${index}`} className="overflow-hidden rounded-2xl bg-white shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-2xl">
               {w.image ? (
                 <img className="h-48 w-full object-cover" src={w.image} alt={w.comment} />
               ) : (

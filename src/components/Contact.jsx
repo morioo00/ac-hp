@@ -2,13 +2,14 @@ import { siteConfig } from "../data/siteConfig";
 
 const Contact = () => {
   return (
-    <section id="contact" className="py-14 sm:py-20">
+    <section id="contact" className="py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <h2 className="mb-6 text-2xl font-bold text-gray-900 sm:text-3xl">お問い合わせ</h2>
+        <h2 className="mb-3 text-3xl font-bold text-gray-900 sm:text-4xl">お問い合わせ</h2>
+        <div className="mb-8 h-1 w-20 rounded-full bg-blue-900" />
         <div className="grid gap-4 sm:grid-cols-2">
           <a
             href={`tel:${siteConfig.phone}`}
-            className="rounded-2xl bg-black p-6 text-white shadow-lg transition hover:bg-gray-800"
+            className="rounded-2xl bg-gray-900 p-6 text-white shadow-xl transition duration-300 hover:-translate-y-1 hover:bg-blue-900"
           >
             <p className="text-sm">お急ぎの方はお電話ください</p>
             <p className="mt-2 text-2xl font-bold">{siteConfig.phone}</p>
