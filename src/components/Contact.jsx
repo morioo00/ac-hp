@@ -29,6 +29,11 @@ const Contact = () => {
             </a>
           </div>
         </div>
+        <p className="mt-10 border-l-2 border-[#d4af37]/70 pl-4 text-base leading-relaxed text-neutral-200 sm:text-lg">
+          まずはお気軽にご相談ください。
+          <br />
+          小さなお困りごとでも丁寧に対応いたします。
+        </p>
       </div>
     </section>
   );

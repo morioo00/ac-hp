@@ -9,7 +9,7 @@ const Header = () => {
           href={`tel:${siteConfig.phone}`}
           className="rounded-full border border-[#d4af37] bg-black px-4 py-2 text-sm font-semibold text-[#d4af37] shadow-lg transition duration-300 hover:scale-105 hover:shadow-[0_0_20px_rgba(212,175,55,0.5)]"
         >
-          今すぐ電話
+          無料で相談する
         </a>
       </div>
     </header>

@@ -8,7 +8,7 @@ const FloatingCallButton = () => {
       className="fixed bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full bg-gradient-to-r from-[#d4af37] to-[#f0dd9b] px-6 py-4 text-lg font-bold text-black shadow-2xl transition duration-300 hover:scale-105"
     >
       <PhoneIcon className="h-6 w-6" />
-      お急ぎの方はこちらまで → 電話を掛ける
+      無料で相談する
     </a>
   );
 };
