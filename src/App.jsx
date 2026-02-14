@@ -10,7 +10,7 @@ import Works from "./components/Works";
 
 function App() {
   return (
-    <div className="pb-24">
+    <div className="bg-black pb-24 text-white">
       <Header />
       <main>
         <Hero />
