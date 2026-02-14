@@ -1,11 +1,11 @@
 export const siteConfig = {
-  brand: "空調設備 工事・修理・点検(仮)",
+  brand: "会社名：～  アップドラフト  ～  空調設備 工事・修理・点検",
   tagline: "修理・設置・入替・洗浄・点検・業務用まで対応",
-  phone: "090-0000-0000",
-  email: "info@example.com",
+  phone: "080-8532-1755",
+  email: "noriaki19950508@outlook.jp",
   businessHours: "9:00〜18:00（不定休）",
-  area: "大阪府〇〇市・周辺エリア",
-  googleFormUrl: "",
+  area: "京都府福知山市、綾部、舞鶴付近",
+  googleFormUrl: "https://maps.app.goo.gl/8hjfVFPeTGkF73Hn7?g_st=il",
   services: [
     "修理",
     "設置（新規取付）",

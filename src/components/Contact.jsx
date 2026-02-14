@@ -24,7 +24,8 @@ const Contact = () => {
               rel="noreferrer"
               className="mt-4 inline-block rounded-full border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700"
             >
-              Googleフォーム（URL貼り付け後に有効）
+              会社所在地 【GoogleMapが開きます】
+            
             </a>
           </div>
         </div>
