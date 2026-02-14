@@ -6,7 +6,6 @@ const Price = () => {
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <h2 className="mb-3 text-3xl font-bold text-white sm:text-4xl">料金目安</h2>
         <div className="mb-6 h-px w-24 bg-[#d4af37]" />
-        <p className="mb-6 text-sm text-neutral-300">※現地見積・追加費用の可能性あり。作業前に必ずご説明のうえ、ご納得いただいてから着手します。</p>
         <div className="overflow-hidden rounded-2xl border border-[#d4af37]/40 bg-neutral-800 shadow-xl">
           <table className="w-full">
             <thead className="bg-[#d4af37] text-black">
@@ -24,6 +23,10 @@ const Price = () => {
               ))}
             </tbody>
           </table>
+        </div>
+        <div className="mt-6 space-y-2 text-sm text-neutral-300">
+          <p>※事前に内容をご説明し、ご納得いただいてから作業いたします。</p>
+          <p>※追加費用が発生する場合は必ずご説明いたします。</p>
         </div>
       </div>
     </section>
