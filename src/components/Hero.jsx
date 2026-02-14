@@ -8,11 +8,21 @@ const Hero = () => {
         <p className="inline-block w-fit rounded-full border border-[#d4af37]/70 bg-[#d4af37]/10 px-4 py-2 text-xs font-semibold text-[#f0dd9b] sm:text-sm">
           京都府福知山市の空調トラブルに迅速対応
         </p>
-        <h1 className="text-4xl font-extrabold leading-tight sm:text-6xl">
-          空間を支える、確かな技術。
-        </h1>
 
-        <div className="h-px w-32 bg-[#d4af37]" />
+        <div className="mt-8 w-[90%] sm:w-[70%] h-[2px] bg-gradient-to-r from-transparent via-[#d4af37] to-transparent mx-auto" />
+
+        <div className="text-center">
+          <h1 className="text-4xl font-extrabold leading-tight sm:text-6xl">
+          空間を支える
+          </h1>
+          <h1 className="text-4xl font-extrabold leading-tight sm:text-6xl">
+          確かな技術。
+          </h1>
+        </div>
+
+
+        <div className="mt-8 w-[90%] sm:w-[70%] h-[2px] bg-gradient-to-r from-transparent via-[#d4af37] to-transparent mx-auto" />
+
         <p className="max-w-3xl text-lg leading-relaxed text-neutral-300 sm:text-xl">
           地域密着で迅速対応。
           <br />
