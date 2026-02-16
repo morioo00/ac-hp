@@ -20,8 +20,8 @@ export const siteConfig = {
     { name: "基本工賃", value: "後程入力" },
   ],
   works: [
-    { image: "", comment: "施工例1（後程入力）" },
-    { image: "", comment: "施工例2（後程入力）" },
-    { image: "", comment: "施工例3（後程入力）" },
+  { image: "/works/ACpic1.png", comment: "ルームエアコン点検作業" },
+  { image: "/works/ACpic2.png", comment: "室外P板交換作業" },
+  { image: "/works/ACpic3.png", comment: "業務用室外機点検作業" },
   ],
 };
