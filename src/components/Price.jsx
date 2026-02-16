@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 // "約1,500円" / "1500円" / "1,500" みたいなのを数値化
 const parseYen = (text) => {
@@ -29,11 +29,61 @@ const parseValueToRange = (value) => {
   const one = parseYen(v);
   if (one !== null) return { min: one, max: one, uncertain: false };
 
-  // その他
   return { min: null, max: null, uncertain: true };
 };
 
 const fmtYen = (n) => `約${n.toLocaleString("ja-JP")}円`;
+
+// ✅ 数値をカウントアップさせる hooks
+const useCountUp = (target, durationMs = 450) => {
+  const [value, setValue] = useState(target ?? 0);
+  const fromRef = useRef(value);
+  const rafRef = useRef(null);
+
+  useEffect(() => {
+    if (target == null) return;
+
+    const from = fromRef.current ?? 0;
+    const to = target;
+    if (from === to) {
+      setValue(to);
+      return;
+    }
+
+    const start = performance.now();
+    const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+
+    const tick = (now) => {
+      const t = Math.min(1, (now - start) / durationMs);
+      const eased = easeOutCubic(t);
+      const next = Math.round(from + (to - from) * eased);
+      setValue(next);
+
+      if (t < 1) {
+        rafRef.current = requestAnimationFrame(tick);
+      } else {
+        fromRef.current = to;
+      }
+    };
+
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(tick);
+
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [target]);
+
+  useEffect(() => {
+    // 初期同期
+    fromRef.current = target ?? 0;
+    setValue(target ?? 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return value;
+};
 
 const Price = () => {
   const rows = useMemo(
@@ -96,11 +146,10 @@ const Price = () => {
   };
 
   // ✅ 合計（最小〜最大、見積含むか）
-  const total = (() => {
+  const total = useMemo(() => {
     const ranges = rows.map((r) => parseValueToRange(selected[r.key]?.value));
     const hasUncertain = ranges.some((x) => x.uncertain);
 
-    // min/max が取れるものだけ足す
     const mins = ranges.map((x) => x.min).filter((x) => x !== null);
     const maxs = ranges.map((x) => x.max).filter((x) => x !== null);
 
@@ -109,25 +158,24 @@ const Price = () => {
 
     const hasAny = mins.length > 0 || maxs.length > 0;
 
-    return {
-      hasUncertain,
-      hasAny,
-      minSum,
-      maxSum,
-    };
-  })();
+    return { hasUncertain, hasAny, minSum, maxSum };
+  }, [rows, selected]);
+
+  // ✅ カウントアップ用（min/max を別々に動かす）
+  const animatedMin = useCountUp(total.hasAny ? total.minSum : null, 520);
+  const animatedMax = useCountUp(total.hasAny ? total.maxSum : null, 520);
 
   const totalText = (() => {
     if (!total.hasAny) return "算出不可";
 
-    // すべて単一金額なら "約◯円"
-    if (!total.hasUncertain && total.minSum === total.maxSum) {
-      return fmtYen(total.minSum);
+    // 単一金額
+    if (total.minSum === total.maxSum) {
+      return `${fmtYen(animatedMin)}${total.hasUncertain ? "（※要見積項目あり）" : ""}`;
     }
 
-    // 範囲 or 不確定含む場合
-    const range = `${fmtYen(total.minSum)} 〜 ${fmtYen(total.maxSum)}`;
-    return total.hasUncertain ? `${range}（※要見積項目あり）` : range;
+    // 範囲
+    const rangeText = `${fmtYen(animatedMin)} 〜 ${fmtYen(animatedMax)}`;
+    return total.hasUncertain ? `${rangeText}（※要見積項目あり）` : rangeText;
   })();
 
   return (
@@ -210,11 +258,12 @@ const Price = () => {
             );
           })}
 
-          {/* ✅ 合計（基本工賃の下に表示） */}
-          <div className="border-t border-[#d4af37]/20 bg-neutral-850">
+          {/* ✅ 合計（背景をほんの少し変えて見やすく） */}
+          <div className="border-t border-[#d4af37]/20 bg-neutral-900/70">
             <div className="grid grid-cols-2 px-6 py-6">
               <div className="text-white font-bold">合計目安</div>
-              <div className="text-center font-extrabold text-[#f0dd9b]">
+
+              <div className="text-center font-extrabold text-[#f0dd9b] tracking-wide">
                 {totalText}
               </div>
             </div>
