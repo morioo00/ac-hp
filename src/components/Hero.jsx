@@ -21,7 +21,7 @@ const Hero = () => {
         </div>
 
 
-        <div className="mt-8 w-[90%] sm:w-[70%] h-[2px] bg-gradient-to-r from-transparent via-[#d4af37] to-transparent mx-auto" />
+  <div className="mt-8 w-[90%] sm:w-[70%] h-[2px] bg-gradient-to-r from-transparent via-[#d4af37] to-transparent mx-auto" />
 
         <p className="max-w-3xl text-lg leading-relaxed text-neutral-300 sm:text-xl">
           地域密着で迅速対応。
@@ -44,6 +44,8 @@ const Hero = () => {
             お問い合わせフォーム
           </a>
         </div>
+        <div className="mt-6 mb-8 h-[2px] w-full bg-[#d4af37]" />
+
         <div className="space-y-1 text-xs text-neutral-400 sm:text-sm">
           <p>※見積無料</p>
           <p>※無理な営業は一切いたしません</p>

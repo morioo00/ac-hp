@@ -5,7 +5,7 @@ const Contact = () => {
     <section id="contact" className="bg-neutral-900 py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <h2 className="mb-3 text-3xl font-bold text-white sm:text-4xl">お問い合わせ</h2>
-        <div className="mb-8 h-px w-24 bg-[#d4af37]" />
+        <div className="mt-4 mb-10 h-[2px] w-full bg-[#d4af37]" />
         <div className="grid gap-4 sm:grid-cols-2">
           <a
             href={`tel:${siteConfig.phone}`}

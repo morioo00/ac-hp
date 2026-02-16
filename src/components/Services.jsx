@@ -30,7 +30,10 @@ const Services = () => {
     <section className="bg-neutral-900 py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <h2 className="mb-3 text-3xl font-bold text-white sm:text-4xl">対応サービス</h2>
-        <div className="mb-6 h-px w-24 bg-[#d4af37]" />
+        <div className="mt-1 h-[2px] w-full bg-[#d4af37]" />
+
+
+
         <p className="mb-10 max-w-3xl text-sm leading-relaxed text-neutral-300 sm:text-base">
           急な故障にも迅速に対応いたします。業務用・家庭用問わず、最適な修理・入替をご提案いたします。
           まずは現地状況を丁寧に確認し、お客様にとって無理のない進め方を一緒に考えます。

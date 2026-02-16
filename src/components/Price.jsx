@@ -5,7 +5,7 @@ const Price = () => {
     <section className="bg-black py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <h2 className="mb-3 text-3xl font-bold text-white sm:text-4xl">料金目安</h2>
-        <div className="mb-6 h-px w-24 bg-[#d4af37]" />
+        <div className="mt-1 mb-6 h-[2px] w-full bg-[#d4af37]" />
         <div className="overflow-hidden rounded-2xl border border-[#d4af37]/40 bg-neutral-800 shadow-xl">
           <table className="w-full">
             <thead className="bg-[#d4af37] text-black">
