@@ -19,14 +19,17 @@ const Contact = () => {
             <a className="mt-2 block text-lg font-semibold text-white" href={`mailto:${siteConfig.email}`}>
               {siteConfig.email}
             </a>
-            <a
-              href={siteConfig.googleFormUrl || "#"}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-4 inline-block rounded-full border border-[#d4af37] px-4 py-2 text-sm font-semibold text-[#f0dd9b] transition hover:bg-[#d4af37]/10"
-            >
-              会社所在地 【GoogleMapが開きます】
-            </a>
+<a
+  href={siteConfig.googleFormUrl || "#"}
+  target="_blank"
+  rel="noreferrer"
+  className="mt-4 inline-block rounded-full border border-[#d4af37] px-4 py-2 text-sm font-semibold text-[#f0dd9b] transition hover:bg-[#d4af37]/10 text-center"
+>
+  会社所在地
+  <br className="sm:hidden" />
+  <span className="sm:ml-2">【GoogleMapが開きます】</span>
+</a>
+
           </div>
         </div>
         <p className="mt-10 border-l-2 border-[#d4af37]/70 pl-4 text-base leading-relaxed text-neutral-200 sm:text-lg">

@@ -7,7 +7,7 @@ const Header = () => {
         <img
           src="/Logo1.png"
           alt="UPDRAFT"
-          className="block w-[380px] sm:w-[500px]"
+          className="block w-[380px] sm:w-[500px] mx-auto"
         />
       </div>
     </header>

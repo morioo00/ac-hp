@@ -3,7 +3,7 @@ export const siteConfig = {
   tagline: "修理・設置・入替・洗浄・点検・業務用まで対応",
   phone: "080-8532-1755",
   email: "noriaki19950508@outlook.jp",
-  businessHours: "9:00〜18:00（不定休）",
+  businessHours: "9:00〜18:00（月～土）",
   area: "京都府福知山市、綾部、舞鶴付近",
   googleFormUrl: "https://maps.app.goo.gl/8hjfVFPeTGkF73Hn7?g_st=il",
   services: [
