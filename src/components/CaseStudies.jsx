@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { siteConfig } from "../data/siteConfig";
 
 const STORAGE_KEY = "adminCaseStudies";
 
@@ -20,6 +21,10 @@ const CaseStudies = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [editTitle, setEditTitle] = useState("");
   const [editDescription, setEditDescription] = useState("");
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [pendingAction, setPendingAction] = useState("");
+  const [adminPasswordInput, setAdminPasswordInput] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   const saveItems = (nextItems) => {
     setItems(nextItems);
@@ -36,6 +41,40 @@ const CaseStudies = () => {
   const closeModal = () => {
     setSelectedItem(null);
     setIsEditMode(false);
+    setIsPasswordModalOpen(false);
+    setPendingAction("");
+    setAdminPasswordInput("");
+    setPasswordError("");
+  };
+
+  const openPasswordModal = (action) => {
+    setPendingAction(action);
+    setAdminPasswordInput("");
+    setPasswordError("");
+    setIsPasswordModalOpen(true);
+  };
+
+  const handlePasswordConfirm = (e) => {
+    e.preventDefault();
+
+    if (adminPasswordInput !== siteConfig.adminPassword) {
+      setPasswordError("パスワードが違います。");
+      return;
+    }
+
+    setIsPasswordModalOpen(false);
+    setAdminPasswordInput("");
+    setPasswordError("");
+
+    if (pendingAction === "edit") {
+      setIsEditMode(true);
+    }
+
+    if (pendingAction === "delete") {
+      handleDelete();
+    }
+
+    setPendingAction("");
   };
 
   const handleDelete = () => {
@@ -142,15 +181,15 @@ const CaseStudies = () => {
                 <>
                   <button
                     type="button"
-                    onClick={() => setIsEditMode(true)}
-                    className="rounded-lg bg-[#d4af37] px-4 py-2 text-sm font-semibold text-black"
+                    onClick={() => openPasswordModal("edit")}
+                    className="rounded-lg border border-[#d4af37]/30 bg-black/55 px-4 py-2 text-sm font-medium text-[#f0dd9b]/75 transition hover:border-[#d4af37]/50 hover:text-[#f0dd9b]"
                   >
                     編集
                   </button>
                   <button
                     type="button"
-                    onClick={handleDelete}
-                    className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white"
+                    onClick={() => openPasswordModal("delete")}
+                    className="rounded-lg border border-[#d4af37]/30 bg-black/55 px-4 py-2 text-sm font-medium text-[#f0dd9b]/75 transition hover:border-[#d4af37]/50 hover:text-[#f0dd9b]"
                   >
                     削除
                   </button>
@@ -190,6 +229,44 @@ const CaseStudies = () => {
               )}
             </div>
           </div>
+
+          {isPasswordModalOpen && (
+            <div
+              className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-4"
+              onClick={() => setIsPasswordModalOpen(false)}
+            >
+              <form
+                onClick={(e) => e.stopPropagation()}
+                onSubmit={handlePasswordConfirm}
+                className="w-full max-w-sm space-y-3 rounded-xl border border-[#d4af37]/35 bg-neutral-950 p-4"
+              >
+                <p className="text-sm text-[#f0dd9b]">管理者パスワードを入力してください</p>
+                <input
+                  type="password"
+                  value={adminPasswordInput}
+                  onChange={(e) => setAdminPasswordInput(e.target.value)}
+                  className="w-full rounded-md border border-[#d4af37]/30 bg-black px-3 py-2 text-white"
+                  placeholder="パスワード"
+                />
+                {passwordError && <p className="text-xs text-red-400">{passwordError}</p>}
+                <div className="flex gap-2">
+                  <button
+                    type="submit"
+                    className="flex-1 rounded-md bg-[#d4af37] px-3 py-2 text-sm font-semibold text-black"
+                  >
+                    確認
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsPasswordModalOpen(false)}
+                    className="flex-1 rounded-md bg-neutral-700 px-3 py-2 text-sm font-semibold text-white"
+                  >
+                    キャンセル
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
         </div>
       )}
     </section>
