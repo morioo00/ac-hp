@@ -1,6 +1,7 @@
-import { useState } from "react"; // ← ① これ追加
+import { useEffect, useState } from "react";
 
 import Area from "./components/Area";
+import CompanyOverview from "./components/CompanyOverview";
 import Contact from "./components/Contact";
 import FloatingCallButton from "./components/FloatingCallButton";
 import Footer from "./components/Footer";
@@ -11,36 +12,41 @@ import Services from "./components/Services";
 import Works from "./components/Works";
 
 function App() {
-
-  // ← ② ここに追加（メニュー開閉管理）
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isCompanyPage, setIsCompanyPage] = useState(window.location.hash === "#company");
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      setIsCompanyPage(window.location.hash === "#company");
+      setIsMenuOpen(false);
+    };
+
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
 
   return (
     <div className="bg-black pb-24 text-white">
+      <Header isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
 
-      {/* ← ③ Headerに渡す */}
-      <Header 
-        isMenuOpen={isMenuOpen}
-        setIsMenuOpen={setIsMenuOpen}
-      />
-
-      <main>
-        <Hero />
-        <Services />
-        <Price />
-        <Works />
-        <Area />
-        <Contact />
+      <main id="top">
+        {isCompanyPage ? (
+          <CompanyOverview />
+        ) : (
+          <>
+            <Hero />
+            <Services />
+            <Price />
+            <Works />
+            <Area />
+            <Contact />
+          </>
+        )}
       </main>
 
       <Footer />
 
-      {/* ← ④ FloatingCallButtonにも渡す */}
-      <FloatingCallButton 
-        isHidden={isMenuOpen}
-      />
-      
-
+      <FloatingCallButton isHidden={isMenuOpen} />
     </div>
   );
 }
