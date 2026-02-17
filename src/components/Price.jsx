@@ -122,28 +122,23 @@ const Price = () => {
   const [openKey, setOpenKey] = useState(null);
 
   // ✅ 選択状態は label/value 両方保持
-  const [selected, setSelected] = useState(() => {
-    const init = {};
-    rows.forEach((r) => {
-      init[r.key] = {
-        label: r.options[0].label,
-        value: r.options[0].value,
-      };
-    });
-    return init;
+const [selected, setSelected] = useState(() => {
+  const init = {};
+  rows.forEach((r) => {
+    init[r.key] = { label: r.options[0].label, value: r.options[0].value };
+  });
+  return init;
   });
 
   const toggleRow = (key) => {
     setOpenKey((prev) => (prev === key ? null : key));
   };
 
-  const selectOption = (key, option) => {
-    setSelected((prev) => ({
-      ...prev,
-      [key]: { label: option.label, value: option.value },
-    }));
-    setOpenKey(null);
-  };
+const selectOption = (key, option) => {
+  setSelected((prev) => ({ ...prev, [key]: { label: option.label, value: option.value } }));
+  setOpenKey(null);
+};
+
 
   // ✅ 合計（最小〜最大、見積含むか）
   const total = useMemo(() => {
@@ -189,10 +184,12 @@ const Price = () => {
 
         <div className="overflow-hidden rounded-2xl border border-[#d4af37]/30">
           {/* ヘッダー */}
-          <div className="grid grid-cols-2 bg-[#d4af37] px-6 py-5 font-bold text-black">
-            <div>項目</div>
-            <div className="text-center">目安料金</div>
-          </div>
+          <div className="grid grid-cols-3 bg-[#d4af37] px-6 py-5 font-bold text-black">
+  <div>項目</div>
+  <div className="text-center">選択内容</div>
+  <div className="text-center">目安料金</div>
+</div>
+
 
           {rows.map((row) => {
             const isOpen = openKey === row.key;
@@ -203,20 +200,33 @@ const Price = () => {
                 <button
                   type="button"
                   onClick={() => toggleRow(row.key)}
-                  className="w-full grid grid-cols-2 px-6 py-6 bg-neutral-800 text-left hover:bg-neutral-750 transition"
+                  className="w-full grid grid-cols-3 px-6 py-6 bg-neutral-800 text-left hover:bg-neutral-750 transition"
                 >
-                  <div className="text-white font-semibold">{row.title}</div>
+{/* 左：項目 */}
+<div className="text-white font-semibold">
+  {row.title}
+</div>
 
-                  <div className="text-center text-white font-bold flex items-center justify-center gap-2">
-                    {selected[row.key].value}
-                    <span
-                      className={`transition-transform duration-300 ${
-                        isOpen ? "rotate-180" : ""
-                      }`}
-                    >
-                      ▾
-                    </span>
-                  </div>
+{/* 中：選択ラベル */}
+<div className="text-center text-sm font-semibold text-[#f0dd9b] opacity-90">
+  {selected[row.key]?.label}
+</div>
+
+{/* 右：金額 */}
+<div className="justify-self-center text-white font-bold">
+  <span className="inline-flex items-center justify-center gap-2">
+    {selected[row.key]?.value}
+    <span
+      className={`transition-transform duration-300 ${
+        isOpen ? "rotate-180" : ""
+      }`}
+    >
+      ▾
+    </span>
+  </span>
+</div>
+
+
                 </button>
 
                 {/* ヌルッと開く部分 */}
@@ -264,8 +274,21 @@ const Price = () => {
               <div className="text-white font-bold">合計目安</div>
 
               <div className="text-center font-extrabold text-[#f0dd9b] tracking-wide">
-                {totalText}
-              </div>
+  {/* 金額（範囲/単一） */}
+  <span className="whitespace-nowrap">
+    {total.minSum === total.maxSum
+      ? fmtYen(animatedMin)
+      : `${fmtYen(animatedMin)} 〜 ${fmtYen(animatedMax)}`}
+  </span>
+
+  {/* 要見積がある時だけ、( ) をスマホで改行 */}
+  {total.hasUncertain && (
+    <span className="block sm:inline whitespace-nowrap text-xs font-semibold text-[#f0dd9b]/90 mt-1 sm:mt-0 sm:ml-2">
+      （※要見積項目あり）
+    </span>
+  )}
+</div>
+
             </div>
           </div>
         </div>
