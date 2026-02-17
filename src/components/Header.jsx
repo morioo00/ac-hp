@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { siteConfig } from "../data/siteConfig";
 
 const menuItems = [
@@ -8,9 +8,8 @@ const menuItems = [
   { label: "会社案内", href: "#about" },
 ];
 
-const Header = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+// ✅ 親(App)から isMenuOpen / setIsMenuOpen を受け取る
+const Header = ({ isMenuOpen, setIsMenuOpen }) => {
   useEffect(() => {
     document.body.style.overflow = isMenuOpen ? "hidden" : "";
     return () => {
@@ -58,11 +57,15 @@ const Header = () => {
         className={`fixed inset-0 z-30 bg-black/90 backdrop-blur-sm transition-all duration-300 ${
           isMenuOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
         }`}
+        // ✅ 背景タップでも閉じたいならON（いらなければ消してOK）
+        onClick={() => setIsMenuOpen(false)}
       >
         <nav
           className={`mx-auto mt-24 flex w-[92%] max-w-3xl flex-col gap-4 rounded-2xl border border-[#d4af37]/30 bg-neutral-950/90 p-6 text-center transition-all duration-300 sm:p-8 ${
             isMenuOpen ? "translate-y-0" : "-translate-y-8"
           }`}
+          // ✅ nav内クリックは閉じないように止める
+          onClick={(e) => e.stopPropagation()}
         >
           {menuItems.map((item) => (
             <a

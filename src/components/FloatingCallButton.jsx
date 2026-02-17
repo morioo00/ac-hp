@@ -2,7 +2,7 @@ import { useState } from "react";
 import { siteConfig } from "../data/siteConfig";
 import { PhoneIcon } from "./HeroIcons";
 
-const FloatingCallButton = () => {
+const FloatingCallButton = ({ isHidden }) => {  // ← ① 追加
   const [isHover, setIsHover] = useState(false);
 
   return (
@@ -10,7 +10,7 @@ const FloatingCallButton = () => {
       href={`tel:${siteConfig.phone}`}
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
-      className="
+      className={`
         fixed bottom-0 left-0 right-0 z-40
         flex items-center justify-center gap-4
         bg-gradient-to-r from-[#d4af37] to-[#f0dd9b]
@@ -19,13 +19,17 @@ const FloatingCallButton = () => {
         md:rounded-2xl lg:w-[72%] xl:w-[60%]
         text-black
         shadow-[0_15px_40px_rgba(212,175,55,0.45)]
-        transition duration-300 ease-out
+        transition-all duration-300 ease-out
         hover:md:scale-[1.02]
-      "
+
+        ${isHidden 
+          ? "opacity-0 translate-y-4 pointer-events-none" 
+          : "opacity-100 translate-y-0"}
+      `}
     >
       <PhoneIcon className="h-6 w-6 shrink-0" />
 
-      {/* 📱 スマホ表示（常時） */}
+      {/* 📱 スマホ表示 */}
       <div className="flex flex-col leading-tight sm:hidden text-center">
         <span className="text-base font-bold">
           電話番号：

@@ -1,3 +1,5 @@
+import { useState } from "react"; // ← ① これ追加
+
 import Area from "./components/Area";
 import Contact from "./components/Contact";
 import FloatingCallButton from "./components/FloatingCallButton";
@@ -9,9 +11,19 @@ import Services from "./components/Services";
 import Works from "./components/Works";
 
 function App() {
+
+  // ← ② ここに追加（メニュー開閉管理）
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   return (
     <div className="bg-black pb-24 text-white">
-      <Header />
+
+      {/* ← ③ Headerに渡す */}
+      <Header 
+        isMenuOpen={isMenuOpen}
+        setIsMenuOpen={setIsMenuOpen}
+      />
+
       <main>
         <Hero />
         <Services />
@@ -20,8 +32,15 @@ function App() {
         <Area />
         <Contact />
       </main>
+
       <Footer />
-      <FloatingCallButton />
+
+      {/* ← ④ FloatingCallButtonにも渡す */}
+      <FloatingCallButton 
+        isHidden={isMenuOpen}
+      />
+      
+
     </div>
   );
 }
