@@ -6,7 +6,7 @@ export const siteConfig = {
   businessHours: "9:00〜18:00（月～土）",
   area: "京都府福知山市、綾部、舞鶴付近",
   googleFormUrl: "https://maps.app.goo.gl/8hjfVFPeTGkF73Hn7?g_st=il",
-  adminPassword: "updraft-admin",
+  adminPassword: "6320",
   services: [
     "修理",
     "設置（新規取付）",
