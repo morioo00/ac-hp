@@ -18,6 +18,14 @@ const Footer = () => {
     setError("");
   };
 
+  const closeAdminPanel = () => {
+    setIsAdmin(false);
+    setTitle("");
+    setDescription("");
+    setImage("");
+    setError("");
+  };
+
   const handleLogin = (e) => {
     e.preventDefault();
     if (password === siteConfig.adminPassword) {
@@ -75,6 +83,7 @@ const Footer = () => {
     setDescription("");
     setImage("");
     setError("");
+    setIsAdmin(false);
     window.location.hash = "#cases";
   };
 
@@ -88,7 +97,10 @@ const Footer = () => {
       <button
         type="button"
         aria-label="管理者ログイン"
-        onClick={() => setIsLoginOpen(true)}
+        onClick={() => {
+          setError("");
+          setIsLoginOpen(true);
+        }}
         className="absolute bottom-3 right-4 h-7 w-7 rounded-full border border-[#d4af37]/20 bg-[#d4af37]/5 text-[10px] text-[#d4af37]/35 transition hover:border-[#d4af37]/50 hover:text-[#d4af37]/80"
       >
         ●
@@ -122,7 +134,16 @@ const Footer = () => {
 
       {isAdmin && (
         <div className="fixed bottom-24 right-4 z-40 w-[92vw] max-w-md rounded-2xl border border-[#d4af37]/45 bg-neutral-950/95 p-4 shadow-2xl backdrop-blur">
-          <h3 className="mb-3 text-lg font-semibold text-[#f0dd9b]">施工事例を追加</h3>
+          <div className="mb-3 flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-[#f0dd9b]">施工事例を追加</h3>
+            <button
+              type="button"
+              onClick={closeAdminPanel}
+              className="rounded-md border border-[#d4af37]/30 px-2 py-1 text-xs text-[#f0dd9b] transition hover:border-[#d4af37]/70"
+            >
+              閉じる
+            </button>
+          </div>
           <form className="space-y-3" onSubmit={handlePost}>
             <input
               value={title}
