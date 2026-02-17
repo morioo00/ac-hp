@@ -5,10 +5,9 @@ const menuItems = [
   { label: "電話連絡先", href: `tel:${siteConfig.phone}` },
   { label: "メール問い合わせ", href: `mailto:${siteConfig.email}` },
   { label: "施工事例一覧", href: "#works" },
-  { label: "会社案内", href: "#about" },
+  { label: "会社概要", href: "#company" },
 ];
 
-// ✅ 親(App)から isMenuOpen / setIsMenuOpen を受け取る
 const Header = ({ isMenuOpen, setIsMenuOpen }) => {
   useEffect(() => {
     document.body.style.overflow = isMenuOpen ? "hidden" : "";
@@ -57,14 +56,12 @@ const Header = ({ isMenuOpen, setIsMenuOpen }) => {
         className={`fixed inset-0 z-30 bg-black/90 backdrop-blur-sm transition-all duration-300 ${
           isMenuOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
         }`}
-        // ✅ 背景タップでも閉じたいならON（いらなければ消してOK）
         onClick={() => setIsMenuOpen(false)}
       >
         <nav
           className={`mx-auto mt-24 flex w-[92%] max-w-3xl flex-col gap-4 rounded-2xl border border-[#d4af37]/30 bg-neutral-950/90 p-6 text-center transition-all duration-300 sm:p-8 ${
             isMenuOpen ? "translate-y-0" : "-translate-y-8"
           }`}
-          // ✅ nav内クリックは閉じないように止める
           onClick={(e) => e.stopPropagation()}
         >
           {menuItems.map((item) => (
