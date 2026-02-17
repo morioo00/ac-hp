@@ -22,7 +22,7 @@ const Works = () => {
   };
 
   return (
-    <section className="bg-neutral-900 py-24">
+    <section id="works" className="bg-neutral-900 py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <h2 className="mb-3 text-3xl font-bold text-white sm:text-4xl text-center">
           施工実績
