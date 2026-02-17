@@ -31,6 +31,7 @@ const Footer = () => {
     if (password === siteConfig.adminPassword) {
       setIsAdmin(true);
       closeLogin();
+      window.location.hash = "#cases";
       return;
     }
 
