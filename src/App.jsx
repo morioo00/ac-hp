@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import Area from "./components/Area";
+import CaseStudies from "./components/CaseStudies";
 import CompanyOverview from "./components/CompanyOverview";
 import Contact from "./components/Contact";
 import FloatingCallButton from "./components/FloatingCallButton";
@@ -13,11 +14,11 @@ import Works from "./components/Works";
 
 function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isCompanyPage, setIsCompanyPage] = useState(window.location.hash === "#company");
+  const [currentHash, setCurrentHash] = useState(window.location.hash);
 
   useEffect(() => {
     const handleHashChange = () => {
-      setIsCompanyPage(window.location.hash === "#company");
+      setCurrentHash(window.location.hash);
       setIsMenuOpen(false);
     };
 
@@ -30,8 +31,10 @@ function App() {
       <Header isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
 
       <main id="top">
-        {isCompanyPage ? (
+        {currentHash === "#company" ? (
           <CompanyOverview />
+        ) : currentHash === "#cases" ? (
+          <CaseStudies />
         ) : (
           <>
             <Hero />

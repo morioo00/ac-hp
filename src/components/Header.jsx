@@ -4,7 +4,7 @@ import { siteConfig } from "../data/siteConfig";
 const menuItems = [
   { label: "電話連絡先", href: `tel:${siteConfig.phone}` },
   { label: "メール問い合わせ", href: `mailto:${siteConfig.email}` },
-  { label: "施工事例一覧", href: "#works" },
+  { label: "施工事例一覧", href: "#cases" },
   { label: "会社概要", href: "#company" },
 ];
 
