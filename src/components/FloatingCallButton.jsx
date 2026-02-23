@@ -1,9 +1,48 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { siteConfig } from "../data/siteConfig";
 import { PhoneIcon } from "./HeroIcons";
 
 const FloatingCallButton = ({ isHidden }) => {
   const [isHover, setIsHover] = useState(false);
+
+  // ★追加：スクロールで隠す
+  const [hideOnScroll, setHideOnScroll] = useState(false);
+  const lastYRef = useRef(0);
+
+  useEffect(() => {
+    lastYRef.current = window.scrollY || 0;
+
+    const onScroll = () => {
+      const y = window.scrollY || 0;
+      const lastY = lastYRef.current;
+
+      const delta = y - lastY; // +: 下へ / -: 上へ
+      lastYRef.current = y;
+
+      // ページ最上部付近は常に表示（任意）
+      if (y < 40) {
+        setHideOnScroll(false);
+        return;
+      }
+
+      // 閾値：小さい揺れは無視してチラつき防止
+      if (Math.abs(delta) < 8) return;
+
+      if (delta > 0) {
+        // 下にスクロール → 隠す
+        setHideOnScroll(true);
+      } else {
+        // 上にスクロール → 表示
+        setHideOnScroll(false);
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // 既存の isHidden と合成（今までの挙動があっても壊さない）
+  const hidden = Boolean(isHidden) || hideOnScroll;
 
   return (
     <a
@@ -12,7 +51,7 @@ const FloatingCallButton = ({ isHidden }) => {
       onMouseLeave={() => setIsHover(false)}
       className={`
         fixed bottom-0 left-0 right-0 z-40
-        bbottom-2 pb-[env(safe-area-inset-bottom)]
+        bottom-2 pb-[env(safe-area-inset-bottom)]
         flex items-center justify-center gap-4
         bg-gradient-to-r from-[#d4af37] to-[#f0dd9b]
         px-5 py-4 sm:px-8 sm:py-5
@@ -21,15 +60,16 @@ const FloatingCallButton = ({ isHidden }) => {
         text-black
         shadow-[0_15px_40px_rgba(212,175,55,0.45)]
         hover:md:scale-[1.02]
-
         transform-gpu
         transition-[transform,opacity]
         ease-[cubic-bezier(0.22,1,0.36,1)]
-        ${isHidden ? "duration-1000" : "duration-300"}
-        ${isHidden
+        ${hidden ? "duration-300" : "duration-300"}
+        ${
+          hidden
             ? "translate-y-[120%] opacity-0 pointer-events-none scale-[0.99]"
-            : "translate-y-0 opacity-100 scale-100"}
-        `}
+            : "translate-y-0 opacity-100 scale-100"
+        }
+      `}
     >
       <PhoneIcon className="h-6 w-6 shrink-0" />
 

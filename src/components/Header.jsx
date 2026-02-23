@@ -19,11 +19,12 @@ const Header = ({ isMenuOpen, setIsMenuOpen }) => {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full border-b border-yellow-700/20 bg-black/95 leading-none backdrop-blur">
+      <header className="sticky top-0 z-40 w-full h-14 md:h-20 border-b border-yellow-700/20 bg-black/95 backdrop-blur">
         <div className="flex w-full items-center justify-between px-0 py-0 md:py-2">
           {/* 左：ロゴ */}
           <Link
             to="/"
+            className="md:ml-48"
             onClick={() => {
               window.location.hash = "";
               window.scrollTo({ top: 0, behavior: "smooth" });
@@ -32,7 +33,7 @@ const Header = ({ isMenuOpen, setIsMenuOpen }) => {
             <img
               src="/Logo1.png"
               alt="UPDRAFT"
-              className="h-20 md:h-32 lg:h-40 w-auto object-contain cursor-pointer"
+              className="h-10 sm:h-12 md:h-14 lg:h-16 w-auto object-contain cursor-pointer"
             />
           </Link>
 
@@ -42,7 +43,15 @@ const Header = ({ isMenuOpen, setIsMenuOpen }) => {
             aria-label={isMenuOpen ? "メニューを閉じる" : "メニューを開く"}
             aria-expanded={isMenuOpen}
             onClick={() => setIsMenuOpen((prev) => !prev)}
-            className="group relative z-50 h-12 w-12 rounded-full border border-[#d4af37]/40 bg-black/60 transition hover:border-[#d4af37]"
+            className="
+              group relative z-50 h-12 w-12
+              rounded-full
+              border border-[#d4af37]/40
+              bg-black/60
+              transition
+              hover:border-[#d4af37]
+              md:mr-6 lg:mr-8
+            "
           >
             <span
               className={`absolute left-1/2 top-1/2 block h-0.5 w-6 -translate-x-1/2 bg-[#f0dd9b] transition-all duration-300 ${
