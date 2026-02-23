@@ -6,20 +6,30 @@ const Hero = () => {
     <section className="bg-gradient-to-b from-black via-neutral-950 to-neutral-900">
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-24 sm:px-6">
         <div className="flex justify-center">
-<p className="
-  mx-auto
-  inline-block w-fit
-  rounded-full
-  border border-[#d4af37]/70
-  bg-[#d4af37]/10
+<p
+  className="
+    mx-auto inline-block
+    min-w-[320px] sm:min-w-[420px] lg:min-w-[520px]
+    rounded-full
+    border border-[#d4af37]/70
+    bg-[#d4af37]/10
+    hover:border-[#d4af37]
+    hover:bg-[#d4af37]/15
 
-  px-6 py-3
-  text-sm font-semibold text-[#f0dd9b]
+    shadow-[0_0_40px_rgba(212,175,55,0.25)]
+    hover:shadow-[0_0_90px_rgba(212,175,55,0.55),0_0_180px_rgba(212,175,55,0.25)]
+    transition-all duration-500
 
-  sm:px-8 sm:py-4
-  sm:text-base
-">
-  京都府福知山市の空調トラブルに迅速対応
+    animate-glow sm:animate-none
+
+    px-8 py-4 sm:px-12 sm:py-5 lg:px-16 lg:py-6
+    text-center text-base sm:text-lg lg:text-xl
+    font-semibold tracking-wide text-[#f0dd9b]
+  "
+>
+  京都府福知山市の
+  <br />
+  空調トラブルに迅速対応
 </p>
 
 

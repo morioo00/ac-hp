@@ -122,23 +122,47 @@ const Price = () => {
   const [openKey, setOpenKey] = useState(null);
 
   // ✅ 選択状態は label/value 両方保持
-const [selected, setSelected] = useState(() => {
-  const init = {};
-  rows.forEach((r) => {
-    init[r.key] = { label: r.options[0].label, value: r.options[0].value };
-  });
-  return init;
+  const [selected, setSelected] = useState(() => {
+    const init = {};
+    rows.forEach((r) => {
+      init[r.key] = { label: r.options[0].label, value: r.options[0].value };
+    });
+    return init;
   });
 
   const toggleRow = (key) => {
     setOpenKey((prev) => (prev === key ? null : key));
   };
 
-const selectOption = (key, option) => {
-  setSelected((prev) => ({ ...prev, [key]: { label: option.label, value: option.value } }));
+  const selectOption = (key, option) => {
+  setSelected((prev) => {
+    const next = { ...prev, [key]: { label: option.label, value: option.value } };
+
+    // ✅ 診断費を変えたら、基本工賃も同じ機種に同期する
+    if (key === "診断費") {
+      const baseRow = rows.find((r) => r.key === "基本工賃");
+      const matched = baseRow?.options?.find((opt) => opt.label === option.label);
+
+      if (matched) {
+        next["基本工賃"] = { label: matched.label, value: matched.value };
+      }
+    }
+
+    // ✅ 基本工賃を変えたら、診断費も同じ機種に同期する
+    if (key === "基本工賃") {
+      const diagRow = rows.find((r) => r.key === "診断費");
+      const matched = diagRow?.options?.find((opt) => opt.label === option.label);
+
+      if (matched) {
+        next["診断費"] = { label: matched.label, value: matched.value };
+      }
+    }
+
+    return next;
+  });
+
   setOpenKey(null);
 };
-
 
   // ✅ 合計（最小〜最大、見積含むか）
   const total = useMemo(() => {
@@ -160,19 +184,6 @@ const selectOption = (key, option) => {
   const animatedMin = useCountUp(total.hasAny ? total.minSum : null, 520);
   const animatedMax = useCountUp(total.hasAny ? total.maxSum : null, 520);
 
-  const totalText = (() => {
-    if (!total.hasAny) return "算出不可";
-
-    // 単一金額
-    if (total.minSum === total.maxSum) {
-      return `${fmtYen(animatedMin)}${total.hasUncertain ? "（※要見積項目あり）" : ""}`;
-    }
-
-    // 範囲
-    const rangeText = `${fmtYen(animatedMin)} 〜 ${fmtYen(animatedMax)}`;
-    return total.hasUncertain ? `${rangeText}（※要見積項目あり）` : rangeText;
-  })();
-
   return (
     <section className="bg-black py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
@@ -185,11 +196,10 @@ const selectOption = (key, option) => {
         <div className="overflow-hidden rounded-2xl border border-[#d4af37]/30">
           {/* ヘッダー */}
           <div className="grid grid-cols-3 bg-[#d4af37] px-6 py-5 font-bold text-black">
-  <div>項目</div>
-  <div className="text-center">選択内容</div>
-  <div className="text-center">目安料金</div>
-</div>
-
+            <div>項目</div>
+            <div className="text-center">選択内容</div>
+            <div className="text-center">目安料金</div>
+          </div>
 
           {rows.map((row) => {
             const isOpen = openKey === row.key;
@@ -202,31 +212,27 @@ const selectOption = (key, option) => {
                   onClick={() => toggleRow(row.key)}
                   className="w-full grid grid-cols-3 px-6 py-6 bg-neutral-800 text-left hover:bg-neutral-750 transition"
                 >
-{/* 左：項目 */}
-<div className="text-white font-semibold">
-  {row.title}
-</div>
+                  {/* 左：項目 */}
+                  <div className="text-white font-semibold">{row.title}</div>
 
-{/* 中：選択ラベル */}
-<div className="text-center text-sm font-semibold text-[#f0dd9b] opacity-90">
-  {selected[row.key]?.label}
-</div>
+                  {/* 中：選択ラベル */}
+                  <div className="text-center text-sm font-semibold text-[#f0dd9b] opacity-90">
+                    {selected[row.key]?.label}
+                  </div>
 
-{/* 右：金額 */}
-<div className="justify-self-center text-white font-bold">
-  <span className="inline-flex items-center justify-center gap-2">
-    {selected[row.key]?.value}
-    <span
-      className={`transition-transform duration-300 ${
-        isOpen ? "rotate-180" : ""
-      }`}
-    >
-      ▾
-    </span>
-  </span>
-</div>
-
-
+                  {/* 右：金額 */}
+                  <div className="justify-self-center text-white font-bold">
+                    <span className="inline-flex items-center justify-center gap-2">
+                      {selected[row.key]?.value}
+                      <span
+                        className={`transition-transform duration-300 ${
+                          isOpen ? "rotate-180" : ""
+                        }`}
+                      >
+                        ▾
+                      </span>
+                    </span>
+                  </div>
                 </button>
 
                 {/* ヌルッと開く部分 */}
@@ -268,27 +274,30 @@ const selectOption = (key, option) => {
             );
           })}
 
-          {/* ✅ 合計（背景をほんの少し変えて見やすく） */}
+          {/* ✅ 合計（列構造を揃えて、見切れを根本解決） */}
           <div className="border-t border-[#d4af37]/20 bg-neutral-900/70">
-            <div className="grid grid-cols-2 px-6 py-6">
+            <div className="grid grid-cols-3 px-6 py-6 items-start">
+              {/* 左 */}
               <div className="text-white font-bold">合計目安</div>
 
-              <div className="text-center font-extrabold text-[#f0dd9b] tracking-wide">
-  {/* 金額（範囲/単一） */}
-  <span className="whitespace-nowrap">
-    {total.minSum === total.maxSum
-      ? fmtYen(animatedMin)
-      : `${fmtYen(animatedMin)} 〜 ${fmtYen(animatedMax)}`}
-  </span>
+              {/* 中（空の列で揃える） */}
+              <div />
 
-  {/* 要見積がある時だけ、( ) をスマホで改行 */}
-  {total.hasUncertain && (
-    <span className="block sm:inline whitespace-nowrap text-xs font-semibold text-[#f0dd9b]/90 mt-1 sm:mt-0 sm:ml-2">
-      （※要見積項目あり）
-    </span>
-  )}
-</div>
+              {/* 右：金額（右詰め・1行・自動縮小） */}
+              <div className="min-w-0 justify-self-end text-right font-extrabold text-[#f0dd9b] tracking-wide">
+                <span className="whitespace-nowrap text-[clamp(14px,3.6vw,22px)]">
+                  {total.minSum === total.maxSum
+                    ? fmtYen(animatedMin)
+                    : `${fmtYen(animatedMin)} 〜 ${fmtYen(animatedMax)}`}
+                </span>
 
+                {/* 要見積がある時だけ、( ) をスマホで改行 */}
+                {total.hasUncertain && (
+                  <span className="block sm:inline whitespace-nowrap text-xs font-semibold text-[#f0dd9b]/90 mt-1 sm:mt-0 sm:ml-2">
+                    （※要見積項目あり）
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         </div>

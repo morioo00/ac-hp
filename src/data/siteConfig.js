@@ -1,5 +1,5 @@
 export const siteConfig = {
-  brand: "会社名：～  アップドラフト  ～  空調設備 工事・修理・点検",
+  brand: "アップドラフト    空調設備 工事・修理・点検",
   tagline: "修理・設置・入替・洗浄・点検・業務用まで対応",
   phone: "080-8532-1755",
   email: "noriaki19950508@outlook.jp",
@@ -10,7 +10,7 @@ export const siteConfig = {
   services: [
     "修理",
     "設置（新規取付）",
-    "入替（交換）",
+    "機器更新（入替・交換）",
     "洗浄（クリーニング）",
     "点検",
     "業務用対応",
