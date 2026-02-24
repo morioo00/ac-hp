@@ -1,41 +1,54 @@
-import { useState } from "react";
-import { siteConfig } from "../data/siteConfig";
-
-const STORAGE_KEY = "adminCaseStudies";
-
-const loadItems = () => {
-  const stored = localStorage.getItem(STORAGE_KEY);
-  if (!stored) return [];
-
-  try {
-    const parsed = JSON.parse(stored);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-};
+import { useEffect, useMemo, useState } from "react";
+import { supabase } from "../lib/supabaseClient";
+import { siteConfig } from "../data/siteConfig"; // いったん残してOK（後で消せる）
 
 const CaseStudies = () => {
-  const [items, setItems] = useState(loadItems);
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState("");
+
   const [selectedItem, setSelectedItem] = useState(null);
+
+  // いったん編集系は“表示だけ”にするためstateは残してもOK（不要なら削除）
   const [isEditMode, setIsEditMode] = useState(false);
   const [editTitle, setEditTitle] = useState("");
   const [editDescription, setEditDescription] = useState("");
+
+  // パスワードモーダルも一旦はオフ運用（不要なら削除）
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [pendingAction, setPendingAction] = useState("");
   const [adminPasswordInput, setAdminPasswordInput] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
-  const saveItems = (nextItems) => {
-    setItems(nextItems);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(nextItems));
+  // ★Supabaseから取得
+  useEffect(() => {
+  const load = async () => {
+    setLoading(true);
+    setFetchError("");
+
+    const { data, error } = await supabase
+      .from("cases")
+      .select("id,title,description,image_url,created_at")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      setFetchError(error.message ?? "取得に失敗しました");
+      setItems([]);
+    } else {
+      setItems(Array.isArray(data) ? data : []);
+    }
+
+    setLoading(false);
   };
+
+  load();
+}, []);
 
   const openItem = (item) => {
     setSelectedItem(item);
     setIsEditMode(false);
-    setEditTitle(item.title);
-    setEditDescription(item.description);
+    setEditTitle(item.title ?? "");
+    setEditDescription(item.description ?? "");
   };
 
   const closeModal = () => {
@@ -47,6 +60,7 @@ const CaseStudies = () => {
     setPasswordError("");
   };
 
+  // ここから下の「編集/削除」は Supabase UPDATE/DELETE 実装後に復活させる想定
   const openPasswordModal = (action) => {
     setPendingAction(action);
     setAdminPasswordInput("");
@@ -66,55 +80,12 @@ const CaseStudies = () => {
     setAdminPasswordInput("");
     setPasswordError("");
 
-    if (pendingAction === "edit") {
-      setIsEditMode(true);
-    }
-
-    if (pendingAction === "delete") {
-      handleDelete();
-    }
+    if (pendingAction === "edit") setIsEditMode(true);
+    // if (pendingAction === "delete") handleDelete(); // ★後でSupabase DELETEに差し替え
 
     setPendingAction("");
   };
 
-  const handleDelete = () => {
-    if (!selectedItem) return;
-    const nextItems = items.filter((item) => item.id !== selectedItem.id);
-    saveItems(nextItems);
-    closeModal();
-  };
-
-  const handleEditSave = () => {
-    if (!selectedItem || !editTitle || !editDescription) return;
-
-    const nextItems = items.map((item) =>
-      item.id === selectedItem.id
-        ? {
-            ...item,
-            title: editTitle,
-            description: editDescription,
-          }
-        : item,
-    );
-
-    const updatedItem = {
-      ...selectedItem,
-      title: editTitle,
-      description: editDescription,
-    };
-
-    saveItems(nextItems);
-    setSelectedItem(updatedItem);
-    setIsEditMode(false);
-  };
-
-  const handleEditCancel = () => {
-    if (selectedItem) {
-      setEditTitle(selectedItem.title);
-      setEditDescription(selectedItem.description);
-    }
-    setIsEditMode(false);
-  };
 
   return (
     <section id="cases" className="bg-neutral-900 py-24">
@@ -122,9 +93,17 @@ const CaseStudies = () => {
         <h2 className="text-center text-3xl font-bold text-white sm:text-4xl">施工事例一覧</h2>
         <div className="mb-8 mt-2 h-[2px] w-full bg-[#d4af37]" />
 
-        {items.length === 0 ? (
+        {loading ? (
           <p className="rounded-2xl border border-[#d4af37]/25 bg-black/40 p-8 text-center text-neutral-300">
-            まだ施工事例はありません。管理者ログイン後に追加できます。
+            読み込み中...
+          </p>
+        ) : fetchError ? (
+          <p className="rounded-2xl border border-red-500/25 bg-black/40 p-8 text-center text-red-300">
+            取得エラー：{fetchError}
+          </p>
+        ) : items.length === 0 ? (
+          <p className="rounded-2xl border border-[#d4af37]/25 bg-black/40 p-8 text-center text-neutral-300">
+            まだ施工事例はありません。
           </p>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -139,7 +118,12 @@ const CaseStudies = () => {
                   className="block w-full overflow-hidden"
                   aria-label={`${item.title}を拡大表示`}
                 >
-                  <img src={item.image} alt={item.title} className="h-56 w-full object-cover transition hover:scale-105" />
+                  <img
+                    src={item.image_url}
+                    alt={item.title ?? "施工画像"}
+                    className="h-56 w-full object-cover transition hover:scale-105"
+                    loading="lazy"
+                  />
                 </button>
                 <div className="space-y-3 p-5">
                   <h3 className="text-lg font-semibold text-[#f0dd9b]">{item.title}</h3>
@@ -171,106 +155,34 @@ const CaseStudies = () => {
 
           <div onClick={(e) => e.stopPropagation()} className="relative w-full">
             <img
-              src={selectedItem.image}
-              alt={selectedItem.title}
+              src={selectedItem.image_url}
+              alt={selectedItem.title ?? "施工画像"}
               className="mx-auto max-h-[92vh] max-w-[92vw] rounded-xl shadow-2xl"
             />
 
+            {/* ★編集/削除は一旦オフ（UPDATE/DELETE＋RLS設計後に復活） */}
+            {/* 
             <div className="fixed bottom-6 right-6 flex flex-col gap-2">
               {!isEditMode ? (
                 <>
-                  <button
-                    type="button"
-                    onClick={() => openPasswordModal("edit")}
-                    className="rounded-lg border border-[#d4af37]/30 bg-black/55 px-4 py-2 text-sm font-medium text-[#f0dd9b]/75 transition hover:border-[#d4af37]/50 hover:text-[#f0dd9b]"
-                  >
-                    編集
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => openPasswordModal("delete")}
-                    className="rounded-lg border border-[#d4af37]/30 bg-black/55 px-4 py-2 text-sm font-medium text-[#f0dd9b]/75 transition hover:border-[#d4af37]/50 hover:text-[#f0dd9b]"
-                  >
-                    削除
-                  </button>
+                  <button type="button" onClick={() => openPasswordModal("edit")} ...>編集</button>
+                  <button type="button" onClick={() => openPasswordModal("delete")} ...>削除</button>
                 </>
               ) : (
-                <div className="w-[88vw] max-w-sm space-y-2 rounded-xl border border-[#d4af37]/35 bg-neutral-950/95 p-3">
-                  <input
-                    value={editTitle}
-                    onChange={(e) => setEditTitle(e.target.value)}
-                    placeholder="タイトル"
-                    className="w-full rounded-md border border-[#d4af37]/30 bg-black px-3 py-2 text-sm text-white"
-                  />
-                  <textarea
-                    value={editDescription}
-                    onChange={(e) => setEditDescription(e.target.value)}
-                    placeholder="説明"
-                    rows={3}
-                    className="w-full rounded-md border border-[#d4af37]/30 bg-black px-3 py-2 text-sm text-white"
-                  />
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      onClick={handleEditSave}
-                      className="flex-1 rounded-md bg-[#d4af37] px-3 py-2 text-sm font-semibold text-black"
-                    >
-                      編集を保存
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleEditCancel}
-                      className="flex-1 rounded-md bg-neutral-700 px-3 py-2 text-sm font-semibold text-white"
-                    >
-                      編集キャンセル
-                    </button>
-                  </div>
-                </div>
+                ...
               )}
             </div>
-          </div>
 
-          {isPasswordModalOpen && (
-            <div
-              className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-4"
-              onClick={() => setIsPasswordModalOpen(false)}
-            >
-              <form
-                onClick={(e) => e.stopPropagation()}
-                onSubmit={handlePasswordConfirm}
-                className="w-full max-w-sm space-y-3 rounded-xl border border-[#d4af37]/35 bg-neutral-950 p-4"
-              >
-                <p className="text-sm text-[#f0dd9b]">管理者パスワードを入力してください</p>
-                <input
-                  type="password"
-                  value={adminPasswordInput}
-                  onChange={(e) => setAdminPasswordInput(e.target.value)}
-                  className="w-full rounded-md border border-[#d4af37]/30 bg-black px-3 py-2 text-white"
-                  placeholder="パスワード"
-                />
-                {passwordError && <p className="text-xs text-red-400">{passwordError}</p>}
-                <div className="flex gap-2">
-                  <button
-                    type="submit"
-                    className="flex-1 rounded-md bg-[#d4af37] px-3 py-2 text-sm font-semibold text-black"
-                  >
-                    確認
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setIsPasswordModalOpen(false)}
-                    className="flex-1 rounded-md bg-neutral-700 px-3 py-2 text-sm font-semibold text-white"
-                  >
-                    キャンセル
-                  </button>
-                </div>
-              </form>
-            </div>
-          )}
+            {isPasswordModalOpen && (
+              ...
+            )}
+            */}
+          </div>
         </div>
       )}
     </section>
   );
 };
+
 
 export default CaseStudies;

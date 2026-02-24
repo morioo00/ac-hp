@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { supabase } from "./lib/supabaseClient";
 
 import Area from "./components/Area";
 import CaseStudies from "./components/CaseStudies";
@@ -15,10 +16,10 @@ import Works from "./components/Works";
 function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentHash, setCurrentHash] = useState(window.location.hash);
-
-  // スクロールでフローティングボタンを隠す（スマホのみ）
   const [hideFloating, setHideFloating] = useState(false);
 
+
+  // ✅ hashchange監視（これも単独のuseEffect）
   useEffect(() => {
     const handleHashChange = () => {
       setCurrentHash(window.location.hash);
@@ -41,26 +42,14 @@ function App() {
       requestAnimationFrame(() => {
         const y = window.scrollY;
         const delta = y - lastY;
-
-        // 小さな揺れを無視する
         const threshold = 8;
-
-        // md未満のみ（スマホ想定）
         const isMobile = window.matchMedia("(max-width: 767px)").matches;
 
         if (isMobile) {
-          // 最上部付近は常に表示（好みで外してOK）
-          if (y < 40) {
-            setHideFloating(false);
-          } else if (delta > threshold) {
-            // 下へスクロール → 隠す
-            setHideFloating(true);
-          } else if (delta < -threshold) {
-            // 上へスクロール → 出す
-            setHideFloating(false);
-          }
+          if (y < 40) setHideFloating(false);
+          else if (delta > threshold) setHideFloating(true);
+          else if (delta < -threshold) setHideFloating(false);
         } else {
-          // PCは常に表示（好みで）
           setHideFloating(false);
         }
 
@@ -74,7 +63,7 @@ function App() {
   }, []);
 
   return (
-    <div className="bg-black pb-32 text-white">
+    <div className="bg-black text-white">
       <Header isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
 
       <main id="top">
@@ -95,8 +84,6 @@ function App() {
       </main>
 
       <Footer />
-
-      {/* メニュー開いてる時 or 下スクロール中は隠す */}
       <FloatingCallButton isHidden={isMenuOpen || hideFloating} />
     </div>
   );
