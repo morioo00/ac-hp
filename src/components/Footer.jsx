@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { siteConfig } from "../data/siteConfig";
+import { supabase } from "../lib/supabaseClient"; 
 
-const STORAGE_KEY = "adminCaseStudies";
+// ここはStorageのバケット名（Supabaseで作ったやつ）
+const BUCKET = "cases-images"; // ←違う名前なら合わせる
 
 const Footer = () => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -10,7 +12,9 @@ const Footer = () => {
   const [error, setError] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [image, setImage] = useState("");
+
+  // ✅ base64じゃなくFileを持つ
+  const [imageFile, setImageFile] = useState(null);
 
   const closeLogin = () => {
     setIsLoginOpen(false);
@@ -22,7 +26,7 @@ const Footer = () => {
     setIsAdmin(false);
     setTitle("");
     setDescription("");
-    setImage("");
+    setImageFile(null);
     setError("");
   };
 
@@ -34,58 +38,66 @@ const Footer = () => {
       window.location.hash = "#cases";
       return;
     }
-
     setError("パスワードが違います。");
   };
 
+  // ✅ Fileをそのまま保持
   const handleImageUpload = (e) => {
     const file = e.target.files?.[0];
-    if (!file) {
-      setImage("");
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === "string") {
-        setImage(reader.result);
-      }
-    };
-    reader.readAsDataURL(file);
+    setImageFile(file ?? null);
   };
 
-  const handlePost = (e) => {
+  // ✅ 画像アップ→URL作成→DB insert
+  const handlePost = async (e) => {
     e.preventDefault();
-    if (!title || !description || !image) {
+    setError("");
+
+    if (!title || !description || !imageFile) {
       setError("タイトル・説明・画像をすべて入力してください。");
       return;
     }
 
-    const entry = {
-      id: Date.now(),
-      title,
-      description,
-      image,
-    };
+    try {
+      // 1) Storageにアップロード（ファイル名は衝突しないように）
+      const ext = imageFile.name.split(".").pop() || "png";
+      const filePath = `cases/${Date.now()}-${crypto.randomUUID()}.${ext}`;
 
-    const stored = localStorage.getItem(STORAGE_KEY);
-    let parsed = [];
-    if (stored) {
-      try {
-        parsed = JSON.parse(stored);
-      } catch {
-        parsed = [];
-      }
+      const { error: uploadError } = await supabase.storage
+        .from(BUCKET)
+        .upload(filePath, imageFile, {
+          cacheControl: "3600",
+          upsert: false,
+          contentType: imageFile.type || undefined,
+        });
+
+      if (uploadError) throw uploadError;
+
+      // 2) 公開URLを取得（バケットが public 前提）
+      const { data: publicData } = supabase.storage
+        .from(BUCKET)
+        .getPublicUrl(filePath);
+
+      const imageUrl = publicData?.publicUrl;
+      if (!imageUrl) throw new Error("画像URLの生成に失敗しました");
+
+      // 3) casesテーブルにINSERT
+      const { error: insertError } = await supabase.from("cases").insert([
+        {
+          title,
+          description,
+          image_url: imageUrl,
+        },
+      ]);
+
+      if (insertError) throw insertError;
+
+      // ✅ 成功したら閉じる
+      closeAdminPanel();
+      window.location.hash = "#cases";
+    } catch (err) {
+      console.error(err);
+      setError(err?.message ?? "投稿に失敗しました。");
     }
-    const next = [entry, ...(Array.isArray(parsed) ? parsed : [])];
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-
-    setTitle("");
-    setDescription("");
-    setImage("");
-    setError("");
-    setIsAdmin(false);
-    window.location.hash = "#cases";
   };
 
   return (
@@ -145,6 +157,7 @@ const Footer = () => {
               閉じる
             </button>
           </div>
+
           <form className="space-y-3" onSubmit={handlePost}>
             <input
               value={title}
@@ -165,7 +178,9 @@ const Footer = () => {
               onChange={handleImageUpload}
               className="w-full rounded-lg border border-[#d4af37]/25 bg-black px-3 py-2 text-neutral-300"
             />
+
             {error && <p className="text-xs text-red-400">{error}</p>}
+
             <button
               type="submit"
               className="w-full rounded-lg bg-[#d4af37] px-3 py-2 font-semibold text-black transition hover:bg-[#e5c85d]"
