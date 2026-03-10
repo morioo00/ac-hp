@@ -147,13 +147,12 @@ const CaseStudies = () => {
           <button
             type="button"
             onClick={closeModal}
-            className="absolute right-6 top-6 text-4xl font-bold text-white transition hover:scale-110"
-            aria-label="拡大画像を閉じる"
+            className="absolute right-4 top-4 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-black/50 text-4xl font-bold text-white transition hover:scale-110 hover:bg-black/70"
           >
             ×
           </button>
 
-          <div onClick={(e) => e.stopPropagation()} className="relative w-full">
+          <div onClick={(e) => e.stopPropagation()} className="relative inline-block max-w-[92vw]">
             <img
               src={selectedItem.image_url}
               alt={selectedItem.title ?? "施工画像"}
