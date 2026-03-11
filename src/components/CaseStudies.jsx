@@ -1,38 +1,37 @@
 import { useEffect, useState } from "react";
-import { siteConfig } from "../data/siteConfig"; // いったん残してOK（後で消せる）
 
-const CaseStudies = ({ items, loading, fetchError }) => {
+const CaseStudies = ({
+  items,
+  loading,
+  fetchError,
+  isAdmin,
+  onRequestAdminAction,
+}) => {
   const [selectedItem, setSelectedItem] = useState(null);
-
-  // いったん編集系は“表示だけ”にするためstateは残してもOK（不要なら削除）
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [editTitle, setEditTitle] = useState("");
-  const [editDescription, setEditDescription] = useState("");
-
-  // パスワードモーダルも一旦はオフ運用（不要なら削除）
-  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
-  const [pendingAction, setPendingAction] = useState("");
-  const [adminPasswordInput, setAdminPasswordInput] = useState("");
-  const [passwordError, setPasswordError] = useState("");
 
   const openItem = (item) => {
     setSelectedItem(item);
-    setIsEditMode(false);
-    setEditTitle(item.title ?? "");
-    setEditDescription(item.description ?? "");
   };
 
   const closeModal = () => {
     setSelectedItem(null);
-    setIsEditMode(false);
-    setIsPasswordModalOpen(false);
-    setPendingAction("");
-    setAdminPasswordInput("");
-    setPasswordError("");
+  };
+
+  // ここ追加:
+  // 編集ボタン押下時に親(App.jsx)へ通知
+  const handleEditClick = () => {
+    if (!selectedItem) return;
+    onRequestAdminAction?.("edit", selectedItem);
+  };
+
+  // ここ追加:
+  // 削除ボタン押下時に親(App.jsx)へ通知
+  const handleDeleteClick = () => {
+    if (!selectedItem) return;
+    onRequestAdminAction?.("delete", selectedItem);
   };
 
   useEffect(() => {
-    // モーダルが閉じているときは何もしない
     if (!selectedItem) return;
 
     const handleKeyDown = (event) => {
@@ -47,32 +46,6 @@ const CaseStudies = ({ items, loading, fetchError }) => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [selectedItem]);
-
-  // ここから下の「編集/削除」は Supabase UPDATE/DELETE 実装後に復活させる想定
-  const openPasswordModal = (action) => {
-    setPendingAction(action);
-    setAdminPasswordInput("");
-    setPasswordError("");
-    setIsPasswordModalOpen(true);
-  };
-
-  const handlePasswordConfirm = (e) => {
-    e.preventDefault();
-
-    if (adminPasswordInput !== siteConfig.adminPassword) {
-      setPasswordError("パスワードが違います。");
-      return;
-    }
-
-    setIsPasswordModalOpen(false);
-    setAdminPasswordInput("");
-    setPasswordError("");
-
-    if (pendingAction === "edit") setIsEditMode(true);
-    // if (pendingAction === "delete") handleDelete(); // ★後でSupabase DELETEに差し替え
-
-    setPendingAction("");
-  };
 
   return (
     <section id="cases" className="bg-neutral-900 py-24">
@@ -114,6 +87,7 @@ const CaseStudies = ({ items, loading, fetchError }) => {
                     loading="lazy"
                   />
                 </button>
+
                 <div className="space-y-3 p-5">
                   <h3 className="text-lg font-semibold text-[#f0dd9b]">
                     {item.title}
@@ -159,23 +133,23 @@ const CaseStudies = ({ items, loading, fetchError }) => {
               className="mx-auto max-h-[92vh] max-w-[92vw] rounded-xl shadow-2xl"
             />
 
-            {/* ★編集/削除は一旦オフ（UPDATE/DELETE＋RLS設計後に復活） */}
-            {/* 
-            <div className="fixed bottom-6 right-6 flex flex-col gap-2">
-              {!isEditMode ? (
-                <>
-                  <button type="button" onClick={() => openPasswordModal("edit")} ...>編集</button>
-                  <button type="button" onClick={() => openPasswordModal("delete")} ...>削除</button>
-                </>
-              ) : (
-                ...
-              )}
-            </div>
+            <div className="fixed bottom-6 right-6 z-[60] flex flex-col gap-3">
+              <button
+                type="button"
+                onClick={handleEditClick}
+                className="rounded-xl bg-[#d4af37] px-5 py-3 font-semibold text-black shadow-lg transition hover:scale-105 hover:brightness-105"
+              >
+                {isAdmin ? "編集" : "管理者ログインして編集"}
+              </button>
 
-            {isPasswordModalOpen && (
-              ...
-            )}
-            */}
+              <button
+                type="button"
+                onClick={handleDeleteClick}
+                className="rounded-xl bg-red-600 px-5 py-3 font-semibold text-white shadow-lg transition hover:scale-105 hover:bg-red-500"
+              >
+                {isAdmin ? "削除" : "管理者ログインして削除"}
+              </button>
+            </div>
           </div>
         </div>
       )}

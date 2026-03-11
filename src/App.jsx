@@ -27,43 +27,156 @@ function App() {
   const [isAdmin, setIsAdmin] = useState(false);
 
   // 管理者ログインを App で管理
-  const [adminModalOpen, setAdminModalOpen] = useState(false); 
-  const [adminLoginError, setAdminLoginError] = useState(""); 
-  const [adminAction, setAdminAction] = useState(null); 
+  const [adminModalOpen, setAdminModalOpen] = useState(false);
+  const [adminLoginError, setAdminLoginError] = useState("");
+  const [adminAction, setAdminAction] = useState({
+    type: null,
+    caseItem: null,
+  });
 
   // 投稿成功した1件を一覧の先頭に追加
   const handleCaseCreated = (newCase) => {
     setCases((prev) => [newCase, ...prev]);
   };
 
-    // Footer から管理者ログインを開く
+  // Footer から管理者ログインを開く
   const openAdminLoginFromFooter = () => {
-    setAdminAction("footer-login"); 
-    setAdminLoginError(""); 
+    setAdminAction({
+      type: "footer-login",
+      caseItem: null,
+    });
+    setAdminLoginError("");
     setAdminModalOpen(true);
   };
 
-    // 管理者ログイン成功時の処理
-  const handleAdminLoginSuccess = (password) => {
-    if (password !== siteConfig.adminPassword) {
-      setAdminLoginError("パスワードが違います。"); 
+  // public URL から Storage 内のファイルパスを取り出す
+  const getStoragePathFromImageUrl = (imageUrl) => {
+    if (!imageUrl) return null;
+
+    const marker = "/storage/v1/object/public/cases-images/";
+    const index = imageUrl.indexOf(marker);
+
+    if (index === -1) return null;
+
+    return imageUrl.slice(index + marker.length);
+  };
+
+  // 削除処理本体
+  // Database削除の前に Storage の画像も削除する
+  const handleDeleteCase = async (caseItem) => {
+    if (!caseItem?.id) return;
+
+    const confirmed = window.confirm(
+      `「${caseItem.title ?? "この施工事例"}」を削除しますか？`
+    );
+    if (!confirmed) return;
+
+    // ここ追加:
+    // image_url から Storage のパスを取り出す
+    const storagePath = getStoragePathFromImageUrl(caseItem.image_url);
+
+    // ここ追加:
+    // 画像ファイルが特定できた場合は先に Storage から削除
+    if (storagePath) {
+      const { error: storageError } = await supabase.storage
+        .from("cases-images")
+        .remove([storagePath]);
+
+      if (storageError) {
+        alert(
+          `画像ファイルの削除に失敗しました: ${
+            storageError.message ?? "unknown error"
+          }`
+        );
+        return;
+      }
+    }
+
+    // ここは既存:
+    // Database のレコード削除
+    const { error: dbError } = await supabase
+      .from("cases")
+      .delete()
+      .eq("id", caseItem.id);
+
+    if (dbError) {
+      alert(`削除に失敗しました: ${dbError.message ?? "unknown error"}`);
       return;
     }
 
-    setAdminLoginError(""); 
-    setAdminModalOpen(false); 
-    setIsAdmin(true); 
+    // React 一覧更新
+    setCases((prev) => prev.filter((item) => item.id !== caseItem.id));
 
-    if (adminAction === "footer-login") {
-      window.location.hash = "#cases"; 
+    alert("削除しました。");
+
+    setAdminAction({
+      type: null,
+      caseItem: null,
+    });
+  };
+
+  // CaseStudies から「編集したい / 削除したい」を受け取る
+  const handleRequestAdminAction = async (type, caseItem) => {
+    setAdminAction({
+      type,
+      caseItem,
+    });
+    setAdminLoginError("");
+
+    // すでに管理者ログイン済みならログインモーダルをスキップ
+    if (isAdmin) {
+      if (type === "delete") {
+        await handleDeleteCase(caseItem);
+      }
+
+      if (type === "edit") {
+        console.log("編集対象", caseItem);
+      }
+
+      return;
+    }
+
+    setAdminModalOpen(true);
+  };
+
+  // 管理者ログイン成功時の処理
+  const handleAdminLoginSuccess = async (password) => {
+    if (password !== siteConfig.adminPassword) {
+      setAdminLoginError("パスワードが違います。");
+      return;
+    }
+
+    setAdminLoginError("");
+    setAdminModalOpen(false);
+    setIsAdmin(true);
+
+    if (adminAction.type === "footer-login") {
+      window.location.hash = "#cases";
+      return;
+    }
+
+    // ログイン成功後、そのまま action 実行
+    if (adminAction.type === "delete") {
+      await handleDeleteCase(adminAction.caseItem);
+      return;
+    }
+
+    if (adminAction.type === "edit") {
+      console.log("編集対象", adminAction.caseItem);
+      return;
     }
   };
-    // 管理者パネルを閉じる
+
+  // 管理者パネルを閉じる
   const handleCloseAdminPanel = () => {
-    setIsAdmin(false); 
+    setIsAdmin(false);
+    setAdminAction({
+      type: null,
+      caseItem: null,
+    });
   };
 
-  // ✅ hashchange監視
+  // hashchange監視
   useEffect(() => {
     const handleHashChange = () => {
       setCurrentHash(window.location.hash);
@@ -139,10 +252,11 @@ function App() {
           <CompanyOverview />
         ) : currentHash === "#cases" ? (
           <CaseStudies
-            // App が持つ state を渡す
             items={cases}
             loading={casesLoading}
             fetchError={casesFetchError}
+            isAdmin={isAdmin}
+            onRequestAdminAction={handleRequestAdminAction}
           />
         ) : (
           <>
@@ -157,24 +271,24 @@ function App() {
       </main>
 
       <Footer
-        // 投稿成功した1件を受け取る関数を渡す
         onCaseCreated={handleCaseCreated}
-        isAdmin={isAdmin} 
-        onOpenAdminLogin={openAdminLoginFromFooter} 
-        onCloseAdminPanel={handleCloseAdminPanel} 
-      />
-      <FloatingCallButton isHidden={isMenuOpen || hideFloating} />
-      <AdminLoginModal
-        open={adminModalOpen}
-          title="管理者ログイン"
-        onClose={() => {
-          setAdminModalOpen(false); 
-          setAdminLoginError(""); 
-        }}
-        onSuccess={handleAdminLoginSuccess} 
-        errorMessage={adminLoginError}
+        isAdmin={isAdmin}
+        onOpenAdminLogin={openAdminLoginFromFooter}
+        onCloseAdminPanel={handleCloseAdminPanel}
       />
 
+      <FloatingCallButton isHidden={isMenuOpen || hideFloating} />
+
+      <AdminLoginModal
+        open={adminModalOpen}
+        title="管理者ログイン"
+        onClose={() => {
+          setAdminModalOpen(false);
+          setAdminLoginError("");
+        }}
+        onSuccess={handleAdminLoginSuccess}
+        errorMessage={adminLoginError}
+      />
     </div>
   );
 }
