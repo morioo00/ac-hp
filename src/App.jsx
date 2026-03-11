@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "./lib/supabaseClient";
+import { siteConfig } from "./data/siteConfig";
 
 import Area from "./components/Area";
 import CaseStudies from "./components/CaseStudies";
@@ -12,6 +13,7 @@ import Hero from "./components/Hero";
 import Price from "./components/Price";
 import Services from "./components/Services";
 import Works from "./components/Works";
+import AdminLoginModal from "./components/AdminLoginModal";
 
 function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -22,10 +24,43 @@ function App() {
   const [cases, setCases] = useState([]);
   const [casesLoading, setCasesLoading] = useState(true);
   const [casesFetchError, setCasesFetchError] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  // 管理者ログインを App で管理
+  const [adminModalOpen, setAdminModalOpen] = useState(false); 
+  const [adminLoginError, setAdminLoginError] = useState(""); 
+  const [adminAction, setAdminAction] = useState(null); 
 
   // 投稿成功した1件を一覧の先頭に追加
   const handleCaseCreated = (newCase) => {
     setCases((prev) => [newCase, ...prev]);
+  };
+
+    // Footer から管理者ログインを開く
+  const openAdminLoginFromFooter = () => {
+    setAdminAction("footer-login"); 
+    setAdminLoginError(""); 
+    setAdminModalOpen(true);
+  };
+
+    // 管理者ログイン成功時の処理
+  const handleAdminLoginSuccess = (password) => {
+    if (password !== siteConfig.adminPassword) {
+      setAdminLoginError("パスワードが違います。"); 
+      return;
+    }
+
+    setAdminLoginError(""); 
+    setAdminModalOpen(false); 
+    setIsAdmin(true); 
+
+    if (adminAction === "footer-login") {
+      window.location.hash = "#cases"; 
+    }
+  };
+    // 管理者パネルを閉じる
+  const handleCloseAdminPanel = () => {
+    setIsAdmin(false); 
   };
 
   // ✅ hashchange監視
@@ -124,9 +159,22 @@ function App() {
       <Footer
         // 投稿成功した1件を受け取る関数を渡す
         onCaseCreated={handleCaseCreated}
+        isAdmin={isAdmin} 
+        onOpenAdminLogin={openAdminLoginFromFooter} 
+        onCloseAdminPanel={handleCloseAdminPanel} 
+      />
+      <FloatingCallButton isHidden={isMenuOpen || hideFloating} />
+      <AdminLoginModal
+        open={adminModalOpen}
+          title="管理者ログイン"
+        onClose={() => {
+          setAdminModalOpen(false); 
+          setAdminLoginError(""); 
+        }}
+        onSuccess={handleAdminLoginSuccess} 
+        errorMessage={adminLoginError}
       />
 
-      <FloatingCallButton isHidden={isMenuOpen || hideFloating} />
     </div>
   );
 }
