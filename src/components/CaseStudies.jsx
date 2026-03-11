@@ -1,12 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
-import { supabase } from "../lib/supabaseClient";
+import { useEffect, useState } from "react";
 import { siteConfig } from "../data/siteConfig"; // いったん残してOK（後で消せる）
 
-const CaseStudies = () => {
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [fetchError, setFetchError] = useState("");
-
+const CaseStudies = ({ items, loading, fetchError }) => {
   const [selectedItem, setSelectedItem] = useState(null);
 
   // いったん編集系は“表示だけ”にするためstateは残してもOK（不要なら削除）
@@ -19,30 +14,6 @@ const CaseStudies = () => {
   const [pendingAction, setPendingAction] = useState("");
   const [adminPasswordInput, setAdminPasswordInput] = useState("");
   const [passwordError, setPasswordError] = useState("");
-
-  // ★Supabaseから取得
-  useEffect(() => {
-  const load = async () => {
-    setLoading(true);
-    setFetchError("");
-
-    const { data, error } = await supabase
-      .from("cases")
-      .select("id,title,description,image_url,created_at")
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      setFetchError(error.message ?? "取得に失敗しました");
-      setItems([]);
-    } else {
-      setItems(Array.isArray(data) ? data : []);
-    }
-
-    setLoading(false);
-  };
-
-  load();
-}, []);
 
   const openItem = (item) => {
     setSelectedItem(item);
@@ -59,6 +30,23 @@ const CaseStudies = () => {
     setAdminPasswordInput("");
     setPasswordError("");
   };
+
+  useEffect(() => {
+    // モーダルが閉じているときは何もしない
+    if (!selectedItem) return;
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        closeModal();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [selectedItem]);
 
   // ここから下の「編集/削除」は Supabase UPDATE/DELETE 実装後に復活させる想定
   const openPasswordModal = (action) => {
@@ -86,11 +74,12 @@ const CaseStudies = () => {
     setPendingAction("");
   };
 
-
   return (
     <section id="cases" className="bg-neutral-900 py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <h2 className="text-center text-3xl font-bold text-white sm:text-4xl">施工事例一覧</h2>
+        <h2 className="text-center text-3xl font-bold text-white sm:text-4xl">
+          施工事例一覧
+        </h2>
         <div className="mb-8 mt-2 h-[2px] w-full bg-[#d4af37]" />
 
         {loading ? (
@@ -126,8 +115,12 @@ const CaseStudies = () => {
                   />
                 </button>
                 <div className="space-y-3 p-5">
-                  <h3 className="text-lg font-semibold text-[#f0dd9b]">{item.title}</h3>
-                  <p className="text-sm leading-relaxed text-neutral-300">{item.description}</p>
+                  <h3 className="text-lg font-semibold text-[#f0dd9b]">
+                    {item.title}
+                  </h3>
+                  <p className="text-sm leading-relaxed text-neutral-300">
+                    {item.description}
+                  </p>
                 </div>
               </article>
             ))}
@@ -143,16 +136,23 @@ const CaseStudies = () => {
       </div>
 
       {selectedItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4" onClick={closeModal}>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+          onClick={closeModal}
+        >
           <button
             type="button"
             onClick={closeModal}
+            aria-label="モーダルを閉じる"
             className="absolute right-4 top-4 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-black/50 text-4xl font-bold text-white transition hover:scale-110 hover:bg-black/70"
           >
             ×
           </button>
 
-          <div onClick={(e) => e.stopPropagation()} className="relative inline-block max-w-[92vw]">
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative inline-block max-w-[92vw]"
+          >
             <img
               src={selectedItem.image_url}
               alt={selectedItem.title ?? "施工画像"}
@@ -182,6 +182,5 @@ const CaseStudies = () => {
     </section>
   );
 };
-
 
 export default CaseStudies;

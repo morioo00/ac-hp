@@ -18,8 +18,17 @@ function App() {
   const [currentHash, setCurrentHash] = useState(window.location.hash);
   const [hideFloating, setHideFloating] = useState(false);
 
+  // 施工事例一覧を親で管理
+  const [cases, setCases] = useState([]);
+  const [casesLoading, setCasesLoading] = useState(true);
+  const [casesFetchError, setCasesFetchError] = useState("");
 
-  // ✅ hashchange監視（これも単独のuseEffect）
+  // 投稿成功した1件を一覧の先頭に追加
+  const handleCaseCreated = (newCase) => {
+    setCases((prev) => [newCase, ...prev]);
+  };
+
+  // ✅ hashchange監視
   useEffect(() => {
     const handleHashChange = () => {
       setCurrentHash(window.location.hash);
@@ -28,6 +37,30 @@ function App() {
 
     window.addEventListener("hashchange", handleHashChange);
     return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
+
+  // 施工事例一覧を初回取得
+  useEffect(() => {
+    const loadCases = async () => {
+      setCasesLoading(true);
+      setCasesFetchError("");
+
+      const { data, error } = await supabase
+        .from("cases")
+        .select("id,title,description,image_url,created_at")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        setCasesFetchError(error.message ?? "取得に失敗しました");
+        setCases([]);
+      } else {
+        setCases(Array.isArray(data) ? data : []);
+      }
+
+      setCasesLoading(false);
+    };
+
+    loadCases();
   }, []);
 
   // スクロール方向検知：下スクロールで隠す / 上スクロールで表示（スマホのみ）
@@ -70,7 +103,12 @@ function App() {
         {currentHash === "#company" ? (
           <CompanyOverview />
         ) : currentHash === "#cases" ? (
-          <CaseStudies />
+          <CaseStudies
+            // App が持つ state を渡す
+            items={cases}
+            loading={casesLoading}
+            fetchError={casesFetchError}
+          />
         ) : (
           <>
             <Hero />
@@ -83,7 +121,11 @@ function App() {
         )}
       </main>
 
-      <Footer />
+      <Footer
+        // 投稿成功した1件を受け取る関数を渡す
+        onCaseCreated={handleCaseCreated}
+      />
+
       <FloatingCallButton isHidden={isMenuOpen || hideFloating} />
     </div>
   );

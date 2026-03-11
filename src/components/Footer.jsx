@@ -3,9 +3,10 @@ import { siteConfig } from "../data/siteConfig";
 import { supabase } from "../lib/supabaseClient"; 
 
 // ここはStorageのバケット名（Supabaseで作ったやつ）
-const BUCKET = "cases-images"; // ←違う名前なら合わせる
+const BUCKET = "cases-images";
 
-const Footer = () => {
+// onCaseCreated を親(App.jsx)から受け取る
+const Footer = ({ onCaseCreated }) => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [password, setPassword] = useState("");
@@ -81,15 +82,23 @@ const Footer = () => {
       if (!imageUrl) throw new Error("画像URLの生成に失敗しました");
 
       // 3) casesテーブルにINSERT
-      const { error: insertError } = await supabase.from("cases").insert([
-        {
-          title,
-          description,
-          image_url: imageUrl,
-        },
-      ]);
+      const { data: insertedCase, error: insertError } = await supabase
+        .from("cases")
+        .insert([
+          {
+            title: title.trim(), 
+            description: description.trim(),
+            image_url: imageUrl,
+          },
+        ])
+        .select("id, title, description, image_url, created_at")
+        .single();
 
       if (insertError) throw insertError;
+
+      if (insertedCase && onCaseCreated) {
+        onCaseCreated(insertedCase);
+      }
 
       // ✅ 成功したら閉じる
       closeAdminPanel();
