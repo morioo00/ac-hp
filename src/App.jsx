@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "./lib/supabaseClient";
 import { siteConfig } from "./data/siteConfig";
+import { Toaster, toast } from "react-hot-toast";
 
 import Area from "./components/Area";
 import CaseStudies from "./components/CaseStudies";
@@ -44,6 +45,7 @@ function App() {
   // 投稿成功した1件を一覧の先頭に追加
   const handleCaseCreated = (newCase) => {
     setCases((prev) => [newCase, ...prev]);
+    toast.success("施工事例を投稿しました。");
   };
 
   // Footer から管理者ログインを開く
@@ -86,7 +88,6 @@ function App() {
   };
 
     // 編集保存（今回はまだ仮）
-  // ここ変更: 編集保存を本実装
   const handleEditSave = async (formValues) => {
     if (!editingCase?.id) return;
 
@@ -114,6 +115,7 @@ function App() {
 
     if (error) {
       setEditError(error.message ?? "更新に失敗しました。");
+      toast.error("施工事例の更新に失敗しました。");
       setEditLoading(false);
       return;
     }
@@ -130,6 +132,7 @@ function App() {
       type: null,
       caseItem: null,
     });
+    toast.success("施工事例を更新しました。");
   };
 
   // 削除処理本体
@@ -152,7 +155,7 @@ function App() {
         .remove([storagePath]);
 
       if (storageError) {
-        alert(
+        toast.error(
           `画像ファイルの削除に失敗しました: ${
             storageError.message ?? "unknown error"
           }`
@@ -169,12 +172,12 @@ function App() {
       .select("id");
 
     if (dbError) {
-      alert(`削除に失敗しました: ${dbError.message ?? "unknown error"}`);
+      toast.error(`削除に失敗しました: ${dbError.message ?? "unknown error"}`);
       return;
     }
 
     if (!deletedRows || deletedRows.length === 0) {
-      alert(
+      toast.error(
         "DB上で削除できませんでした。RLSのDELETEポリシー不足の可能性があります。"
       );
       return;
@@ -187,6 +190,7 @@ function App() {
       type: null,
       caseItem: null,
     });
+    toast.success("施工事例を削除しました。");
   };
 
   // CaseStudies から「編集したい / 削除したい」を受け取る
@@ -225,6 +229,7 @@ function App() {
     setAdminModalOpen(false);
     setIsAdmin(true);
     localStorage.setItem("ac_hp_admin_login", "true");
+    toast.success("管理者ログインしました。");
 
     if (adminAction.type === "footer-login") {
       window.location.hash = "#cases";
@@ -252,6 +257,7 @@ function App() {
       type: null,
       caseItem: null,
     });
+    toast.success("管理者ログアウトしました。");
   };
 
   // hashchange監視
@@ -279,6 +285,7 @@ function App() {
       if (error) {
         setCasesFetchError(error.message ?? "取得に失敗しました");
         setCases([]);
+        toast.error("施工事例の取得に失敗しました。");
       } else {
         setCases(Array.isArray(data) ? data : []);
       }
@@ -332,6 +339,7 @@ function App() {
 
   return (
     <div className="bg-black text-white">
+      <Toaster position="top-right" />
       <Header isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
 
       <main id="top">
