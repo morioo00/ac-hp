@@ -224,6 +224,7 @@ function App() {
     setAdminLoginError("");
     setAdminModalOpen(false);
     setIsAdmin(true);
+    localStorage.setItem("ac_hp_admin_login", "true");
 
     if (adminAction.type === "footer-login") {
       window.location.hash = "#cases";
@@ -246,6 +247,7 @@ function App() {
   // 管理者パネルを閉じる
   const handleCloseAdminPanel = () => {
     setIsAdmin(false);
+      localStorage.removeItem("ac_hp_admin_login");
     setAdminAction({
       type: null,
       caseItem: null,
@@ -285,6 +287,15 @@ function App() {
     };
 
     loadCases();
+  }, []);
+
+    // 管理者ログイン状態を復元
+  useEffect(() => {
+    const savedLogin = localStorage.getItem("ac_hp_admin_login");
+
+    if (savedLogin === "true") {
+      setIsAdmin(true);
+    }
   }, []);
 
   // スクロール方向検知：下スクロールで隠す / 上スクロールで表示（スマホのみ）
