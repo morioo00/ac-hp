@@ -11,7 +11,6 @@ function EditCaseModal({
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
-  // ここ追加: 編集対象が変わったらフォームに初期値を入れる
   useEffect(() => {
     if (!initialData) {
       setTitle("");
@@ -39,46 +38,71 @@ function EditCaseModal({
       className="fixed inset-0 z-[120] flex items-center justify-center bg-black/70 px-4"
       onClick={onClose}
     >
+      {/* ここ変更：追加モーダルと同じサイズ */}
       <div
-        className="w-full max-w-lg rounded-2xl bg-white p-6 text-black shadow-2xl"
+        className="w-full max-w-xl rounded-[28px] border border-[#c8a63c] bg-black px-6 py-7 text-white shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="mb-4 text-2xl font-bold">施工事例を編集</h2>
+        {/* ヘッダー */}
+        <div className="mb-6 flex items-start justify-between gap-4">
+          <h2 className="text-3xl font-bold tracking-wide text-[#f3e3a2]">
+            施工事例を編集
+          </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-xl border border-[#c8a63c] px-4 py-2 text-sm font-semibold text-[#f3e3a2] transition hover:bg-[#c8a63c] hover:text-black"
+          >
+            閉じる
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* タイトル */}
           <div>
-            <label className="mb-2 block text-sm font-semibold">タイトル</label>
+            <label className="mb-2 block text-base font-semibold text-[#f3e3a2]">
+              タイトル
+            </label>
+
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="タイトルを入力"
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-black"
+              placeholder="タイトル"
+              className="w-full rounded-xl border border-[#c8a63c] bg-black px-4 py-4 text-base text-white placeholder:text-gray-400 outline-none"
               disabled={loading}
             />
           </div>
 
+          {/* 説明 */}
           <div>
-            <label className="mb-2 block text-sm font-semibold">説明</label>
+            <label className="mb-2 block text-base font-semibold text-[#f3e3a2]">
+              説明
+            </label>
+
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="説明を入力"
-              rows={5}
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-black"
+              placeholder="説明"
+              rows={4}   // ここ変更（追加モーダルと同じ高さ感）
+              className="w-full rounded-xl border border-[#c8a63c] bg-black px-4 py-4 text-base text-white placeholder:text-gray-400 outline-none"
               disabled={loading}
             />
           </div>
 
-          {errorMessage ? (
-            <p className="text-sm font-medium text-red-600">{errorMessage}</p>
-          ) : null}
+          {errorMessage && (
+            <p className="text-sm font-semibold text-red-400">
+              {errorMessage}
+            </p>
+          )}
 
+          {/* ボタン */}
           <div className="flex justify-end gap-3 pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold"
+              className="rounded-xl border border-[#c8a63c] px-6 py-3 text-base font-semibold text-[#f3e3a2] transition hover:bg-[#c8a63c] hover:text-black"
               disabled={loading}
             >
               キャンセル
@@ -86,7 +110,7 @@ function EditCaseModal({
 
             <button
               type="submit"
-              className="rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white disabled:opacity-60"
+              className="rounded-xl bg-[#d4af37] px-6 py-3 text-base font-bold text-black transition hover:brightness-105"
               disabled={loading}
             >
               {loading ? "保存中..." : "保存"}

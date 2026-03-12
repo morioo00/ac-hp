@@ -339,7 +339,47 @@ function App() {
 
   return (
     <div className="bg-black text-white">
-      <Toaster position="top-right" />
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: "#000000",
+            color: "#f3e3a2",
+            border: "1px solid #c8a63c",
+            borderRadius: "16px",
+            padding: "14px 16px",
+            fontSize: "14px",
+            fontWeight: "600",
+            boxShadow: "0 10px 30px rgba(0, 0, 0, 0.45)",
+          },
+          success: {
+            duration: 3000,
+            iconTheme: {
+              primary: "#d4af37",
+              secondary: "#000000",
+            },
+          },
+          error: {
+            duration: 4000,
+            style: {
+              background: "#140909",
+              color: "#ffd6d6",
+              border: "1px solid #d14b4b",
+              borderRadius: "16px",
+              padding: "14px 16px",
+              fontSize: "14px",
+              fontWeight: "600",
+              boxShadow: "0 10px 30px rgba(0, 0, 0, 0.45)",
+            },
+            iconTheme: {
+              primary: "#ff6b6b",
+              secondary: "#140909",
+            },
+          },
+        }}
+      />
+
       <Header isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
 
       <main id="top">
