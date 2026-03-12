@@ -71,11 +71,9 @@ function App() {
     );
     if (!confirmed) return;
 
-    // ここ追加:
     // image_url から Storage のパスを取り出す
     const storagePath = getStoragePathFromImageUrl(caseItem.image_url);
 
-    // ここ追加:
     // 画像ファイルが特定できた場合は先に Storage から削除
     if (storagePath) {
       const { error: storageError } = await supabase.storage
@@ -92,22 +90,36 @@ function App() {
       }
     }
 
-    // ここは既存:
-    // Database のレコード削除
-    const { error: dbError } = await supabase
-      .from("cases")
-      .delete()
-      .eq("id", caseItem.id);
+  // Database のレコード削除
+  const { data: deletedRows, error: dbError } = await supabase
+    .from("cases")
+    .delete()
+    .eq("id", caseItem.id)
+    .select("id");
 
-    if (dbError) {
-      alert(`削除に失敗しました: ${dbError.message ?? "unknown error"}`);
-      return;
-    }
+  if (dbError) {
+    alert(`削除に失敗しました: ${dbError.message ?? "unknown error"}`);
+    return;
+  }
+
+  if (!deletedRows || deletedRows.length === 0) {
+    alert(
+      "DB上で削除できませんでした。RLSのDELETEポリシー不足の可能性があります。"
+    );
+    return;
+  }
+
+  setCases((prev) => prev.filter((item) => item.id !== caseItem.id));
+
+  alert("削除しました。");
+
+  setAdminAction({
+    type: null,
+    caseItem: null,
+  });
 
     // React 一覧更新
     setCases((prev) => prev.filter((item) => item.id !== caseItem.id));
-
-    alert("削除しました。");
 
     setAdminAction({
       type: null,

@@ -17,14 +17,12 @@ const CaseStudies = ({
     setSelectedItem(null);
   };
 
-  // ここ追加:
   // 編集ボタン押下時に親(App.jsx)へ通知
   const handleEditClick = () => {
     if (!selectedItem) return;
     onRequestAdminAction?.("edit", selectedItem);
   };
 
-  // ここ追加:
   // 削除ボタン押下時に親(App.jsx)へ通知
   const handleDeleteClick = () => {
     if (!selectedItem) return;
@@ -46,6 +44,17 @@ const CaseStudies = ({
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [selectedItem]);
+
+    // 一覧から選択中の施工事例が消えたら、拡大モーダルも閉じる
+  useEffect(() => {
+    if (!selectedItem) return;
+
+    const stillExists = items.some((item) => item.id === selectedItem.id);
+
+    if (!stillExists) {
+      closeModal();
+    }
+  }, [items, selectedItem]);
 
   return (
     <section id="cases" className="bg-neutral-900 py-24">
@@ -139,7 +148,7 @@ const CaseStudies = ({
                 onClick={handleEditClick}
                 className="rounded-xl bg-[#d4af37] px-5 py-3 font-semibold text-black shadow-lg transition hover:scale-105 hover:brightness-105"
               >
-                {isAdmin ? "編集" : "管理者ログインして編集"}
+                {isAdmin ? "編集" : "編集"}
               </button>
 
               <button
@@ -147,7 +156,7 @@ const CaseStudies = ({
                 onClick={handleDeleteClick}
                 className="rounded-xl bg-red-600 px-5 py-3 font-semibold text-white shadow-lg transition hover:scale-105 hover:bg-red-500"
               >
-                {isAdmin ? "削除" : "管理者ログインして削除"}
+                {isAdmin ? "削除" : "削除"}
               </button>
             </div>
           </div>
