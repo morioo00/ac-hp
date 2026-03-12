@@ -14,6 +14,7 @@ import Price from "./components/Price";
 import Services from "./components/Services";
 import Works from "./components/Works";
 import AdminLoginModal from "./components/AdminLoginModal";
+import EditCaseModal from "./components/EditCaseModal";
 
 function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -33,6 +34,12 @@ function App() {
     type: null,
     caseItem: null,
   });
+
+  // 編集機能用の state
+  const [editingCase, setEditingCase] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editLoading, setEditLoading] = useState(false);
+  const [editError, setEditError] = useState("");
 
   // 投稿成功した1件を一覧の先頭に追加
   const handleCaseCreated = (newCase) => {
@@ -59,6 +66,70 @@ function App() {
     if (index === -1) return null;
 
     return imageUrl.slice(index + marker.length);
+  };
+
+  // 編集開始
+  const handleStartEdit = (caseItem) => {
+    if (!caseItem?.id) return;
+
+    setEditError("");
+    setEditingCase(caseItem);
+    setIsEditModalOpen(true);
+  };
+
+  // 編集モーダルを閉じる
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+    setEditingCase(null);
+    setEditError("");
+    setEditLoading(false);
+  };
+
+    // 編集保存（今回はまだ仮）
+  // ここ変更: 編集保存を本実装
+  const handleEditSave = async (formValues) => {
+    if (!editingCase?.id) return;
+
+    const trimmedTitle = formValues.title?.trim() ?? "";
+    const trimmedDescription = formValues.description?.trim() ?? "";
+
+    // ここ追加: 簡易バリデーション
+    if (!trimmedTitle) {
+      setEditError("タイトルを入力してください。");
+      return;
+    }
+
+    setEditLoading(true);
+    setEditError("");
+
+    const { data: updatedCase, error } = await supabase
+      .from("cases")
+      .update({
+        title: trimmedTitle,
+        description: trimmedDescription,
+      })
+      .eq("id", editingCase.id)
+      .select("id,title,description,image_url,created_at")
+      .single();
+
+    if (error) {
+      setEditError(error.message ?? "更新に失敗しました。");
+      setEditLoading(false);
+      return;
+    }
+
+    // ここ追加: 一覧の該当1件だけ差し替える
+    setCases((prev) =>
+      prev.map((item) => (item.id === updatedCase.id ? updatedCase : item))
+    );
+
+    setEditLoading(false);
+    handleCloseEditModal();
+
+    setAdminAction({
+      type: null,
+      caseItem: null,
+    });
   };
 
   // 削除処理本体
@@ -90,35 +161,26 @@ function App() {
       }
     }
 
-  // Database のレコード削除
-  const { data: deletedRows, error: dbError } = await supabase
-    .from("cases")
-    .delete()
-    .eq("id", caseItem.id)
-    .select("id");
+    // Database のレコード削除
+    const { data: deletedRows, error: dbError } = await supabase
+      .from("cases")
+      .delete()
+      .eq("id", caseItem.id)
+      .select("id");
 
-  if (dbError) {
-    alert(`削除に失敗しました: ${dbError.message ?? "unknown error"}`);
-    return;
-  }
+    if (dbError) {
+      alert(`削除に失敗しました: ${dbError.message ?? "unknown error"}`);
+      return;
+    }
 
-  if (!deletedRows || deletedRows.length === 0) {
-    alert(
-      "DB上で削除できませんでした。RLSのDELETEポリシー不足の可能性があります。"
-    );
-    return;
-  }
+    if (!deletedRows || deletedRows.length === 0) {
+      alert(
+        "DB上で削除できませんでした。RLSのDELETEポリシー不足の可能性があります。"
+      );
+      return;
+    }
 
-  setCases((prev) => prev.filter((item) => item.id !== caseItem.id));
-
-  alert("削除しました。");
-
-  setAdminAction({
-    type: null,
-    caseItem: null,
-  });
-
-    // React 一覧更新
+    // state更新は1回だけ
     setCases((prev) => prev.filter((item) => item.id !== caseItem.id));
 
     setAdminAction({
@@ -142,7 +204,8 @@ function App() {
       }
 
       if (type === "edit") {
-        console.log("編集対象", caseItem);
+        // console.log ではなく編集開始
+        handleStartEdit(caseItem);
       }
 
       return;
@@ -174,7 +237,8 @@ function App() {
     }
 
     if (adminAction.type === "edit") {
-      console.log("編集対象", adminAction.caseItem);
+      // ここ修正: console.log ではなく編集開始
+      handleStartEdit(adminAction.caseItem);
       return;
     }
   };
@@ -300,6 +364,15 @@ function App() {
         }}
         onSuccess={handleAdminLoginSuccess}
         errorMessage={adminLoginError}
+      />
+
+      <EditCaseModal
+        open={isEditModalOpen}
+        initialData={editingCase}
+        loading={editLoading}
+        errorMessage={editError}
+        onClose={handleCloseEditModal}
+        onSave={handleEditSave}
       />
     </div>
   );
