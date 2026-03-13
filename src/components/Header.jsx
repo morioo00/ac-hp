@@ -50,6 +50,9 @@ const Header = ({ isMenuOpen, setIsMenuOpen }) => {
               bg-sky-50/60
               transition
               hover:border-[#0ea5b7]
+              hover:-translate-y-0.5
+              hover:shadow-md
+              hover:bg-[#0ea5b7]/10
               md:mr-6 lg:mr-8
             "
           >

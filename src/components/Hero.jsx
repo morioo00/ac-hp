@@ -32,9 +32,8 @@ const Hero = () => {
 
             <a
               href="#contact"
-              className="rounded-full border border-sky-300 bg-sky-50 px-8 py-4 text-center text-base font-semibold text-slate-800 shadow-lg transition duration-300 hover:scale-[1.02] hover:border-[#0ea5b7]"
-            >
-              お問い合わせフォーム
+              className="flex items-center justify-center gap-2 rounded-full border border-[#0ea5b7] bg-sky-50 px-8 py-4 text-base font-bold text-[#0ea5b7] shadow-xl transition duration-300 hover:scale-[1.02] hover:ring-2 hover:ring-[#0ea5b7]/60 hover:shadow-[0_0_24px_rgba(14,165,183,0.35)]"
+              >お問い合わせフォーム
             </a>
           </div>
 

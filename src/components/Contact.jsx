@@ -33,9 +33,8 @@ const Contact = () => {
                 </p>
               </div>
 
-              {/* 右：画像（public/call-illust.png） */}
               <img
-                src="/call-illust.png"
+                src="/works/silhouette_lp_final.png"
                 alt=""
                 className="
                   ml-auto
@@ -52,7 +51,8 @@ const Contact = () => {
           </a>
 
           {/* メール + 会社所在地（GoogleMap） */}
-          <div className="rounded-2xl border border-[#0ea5b7]/20 bg-white p-6 shadow-lg">
+          <div className="rounded-2xl border border-[#0ea5b7]/30 bg-white p-6 shadow-lg transition duration-300
+    hover:-translate-y-1 hover:shadow-2xl">
             <p className="text-sm text-slate-500">メール</p>
 
             <a
