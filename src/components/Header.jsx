@@ -19,21 +19,39 @@ const Header = ({ isMenuOpen, setIsMenuOpen }) => {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full h-14 md:h-20 border-b border-sky-300/40 bg-sky-50/95 backdrop-blur">
-        <div className="flex w-full items-center justify-between px-0 py-0 md:py-2">
+      <header
+        className="
+          sticky top-0 z-40 w-full
+          h-16 md:h-24 // ここ変更：ヘッダー自体を少し高く
+          border-b border-sky-300/40
+          bg-sky-50/95
+          backdrop-blur
+        "
+      >
+        <div
+          className="
+            flex h-full w-full items-center justify-between
+            px-3 sm:px-4 md:px-6 lg:px-8 // ここ変更：左右余白を追加
+          "
+        >
           {/* 左：ロゴ */}
           <Link
             to="/"
-            className="md:ml-48"
+            className="shrink-0 md:ml-8 lg:ml-16" // ここ変更：余白を自然に
             onClick={() => {
               window.location.hash = "";
               window.scrollTo({ top: 0, behavior: "smooth" });
             }}
           >
             <img
-              src="/Logo1.png"
               alt="UPDRAFT"
-              className="h-10 sm:h-12 md:h-14 lg:h-16 w-auto object-contain cursor-pointer"
+              src="/updraft_logo_whitebg.png"
+              className="
+                h-14 sm:h-16 md:h-20 lg:h-24 // ここ変更：ロゴを大きめ維持
+                w-auto
+                object-contain
+                cursor-pointer
+              "
             />
           </Link>
 
@@ -53,7 +71,7 @@ const Header = ({ isMenuOpen, setIsMenuOpen }) => {
               hover:-translate-y-0.5
               hover:shadow-md
               hover:bg-[#0ea5b7]/10
-              md:mr-6 lg:mr-8
+              md:mr-2 lg:mr-4 // ここ変更：右余白を少し自然に
             "
           >
             <span
