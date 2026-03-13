@@ -57,23 +57,23 @@ const CaseStudies = ({
   }, [items, selectedItem]);
 
   return (
-    <section id="cases" className="bg-neutral-900 py-24">
+    <section id="cases" className="bg-sky-50 py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <h2 className="text-center text-3xl font-bold text-white sm:text-4xl">
+        <h2 className="text-center text-3xl font-bold text-slate-800 sm:text-4xl">
           施工事例一覧
         </h2>
-        <div className="mb-8 mt-2 h-[2px] w-full bg-[#d4af37]" />
+        <div className="mb-8 mt-2 h-[2px] w-full bg-[#0ea5b7]" />
 
         {loading ? (
-          <p className="rounded-2xl border border-[#d4af37]/25 bg-black/40 p-8 text-center text-neutral-300">
+          <p className="rounded-2xl border border-[#0ea5b7]/25 bg-sky-50/40 p-8 text-center text-slate-600">
             読み込み中...
           </p>
         ) : fetchError ? (
-          <p className="rounded-2xl border border-red-500/25 bg-black/40 p-8 text-center text-red-300">
+          <p className="rounded-2xl border border-red-500/25 bg-sky-50/40 p-8 text-center text-red-300">
             取得エラー：{fetchError}
           </p>
         ) : items.length === 0 ? (
-          <p className="rounded-2xl border border-[#d4af37]/25 bg-black/40 p-8 text-center text-neutral-300">
+          <p className="rounded-2xl border border-[#0ea5b7]/25 bg-sky-50/40 p-8 text-center text-slate-600">
             まだ施工事例はありません。
           </p>
         ) : (
@@ -81,7 +81,7 @@ const CaseStudies = ({
             {items.map((item) => (
               <article
                 key={item.id}
-                className="overflow-hidden rounded-2xl border border-[#d4af37]/25 bg-neutral-800 shadow-lg"
+                className="overflow-hidden rounded-2xl border border-[#0ea5b7]/25 bg-white shadow-lg"
               >
                 <button
                   type="button"
@@ -98,10 +98,10 @@ const CaseStudies = ({
                 </button>
 
                 <div className="space-y-3 p-5">
-                  <h3 className="text-lg font-semibold text-[#f0dd9b]">
+                  <h3 className="text-lg font-semibold text-[#38bdf8]">
                     {item.title}
                   </h3>
-                  <p className="text-sm leading-relaxed text-neutral-300">
+                  <p className="text-sm leading-relaxed text-slate-600">
                     {item.description}
                   </p>
                 </div>
@@ -112,7 +112,7 @@ const CaseStudies = ({
 
         <a
           href="#top"
-          className="mt-10 inline-block rounded-xl border border-[#d4af37]/60 px-5 py-3 font-semibold text-[#f0dd9b] transition hover:bg-[#d4af37]/10"
+          className="mt-10 inline-block rounded-xl border border-[#0ea5b7]/60 px-5 py-3 font-semibold text-[#38bdf8] transition hover:bg-[#0ea5b7]/10"
         >
           トップページに戻る
         </a>
@@ -120,14 +120,14 @@ const CaseStudies = ({
 
       {selectedItem && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/65 p-4"
           onClick={closeModal}
         >
           <button
             type="button"
             onClick={closeModal}
             aria-label="モーダルを閉じる"
-            className="absolute right-4 top-4 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-black/50 text-4xl font-bold text-white transition hover:scale-110 hover:bg-black/70"
+            className="absolute right-4 top-4 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-slate-900/45 text-4xl font-bold text-white transition hover:scale-110 hover:bg-slate-900/70"
           >
             ×
           </button>
@@ -146,7 +146,7 @@ const CaseStudies = ({
               <button
                 type="button"
                 onClick={handleEditClick}
-                className="rounded-xl bg-[#d4af37] px-5 py-3 font-semibold text-black shadow-lg transition hover:scale-105 hover:brightness-105"
+                className="rounded-xl bg-[#0ea5b7] px-5 py-3 font-semibold text-white shadow-lg transition hover:scale-105 hover:brightness-105"
               >
                 {isAdmin ? "編集" : "編集"}
               </button>

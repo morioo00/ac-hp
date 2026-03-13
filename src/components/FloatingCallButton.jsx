@@ -53,12 +53,12 @@ const FloatingCallButton = ({ isHidden }) => {
         fixed bottom-0 left-0 right-0 z-40
         bottom-2 pb-[env(safe-area-inset-bottom)]
         flex items-center justify-center gap-4
-        bg-gradient-to-r from-[#d4af37] to-[#f0dd9b]
+        bg-gradient-to-r from-[#0ea5b7] to-[#38bdf8]
         px-5 py-4 sm:px-8 sm:py-5
         w-full md:w-[86%] md:left-1/2 md:right-auto md:-translate-x-1/2 md:bottom-4
         md:rounded-2xl lg:w-[72%] xl:w-[60%]
-        text-black
-        shadow-[0_15px_40px_rgba(212,175,55,0.45)]
+        text-white
+        shadow-[0_15px_40px_rgba(14,165,183,0.35)]
         hover:md:scale-[1.02]
         transform-gpu
         transition-[transform,opacity]

@@ -35,24 +35,24 @@ function EditCaseModal({
 
   return (
     <div
-      className="fixed inset-0 z-[120] flex items-center justify-center bg-black/70 px-4"
+      className="fixed inset-0 z-[120] flex items-center justify-center bg-slate-900/60 px-4"
       onClick={onClose}
     >
       {/* ここ変更：追加モーダルと同じサイズ */}
       <div
-        className="w-full max-w-xl rounded-[28px] border border-[#c8a63c] bg-black px-6 py-7 text-white shadow-2xl"
+        className="w-full max-w-xl rounded-[28px] border border-[#0ea5b7] bg-sky-50 px-6 py-7 text-slate-800 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* ヘッダー */}
         <div className="mb-6 flex items-start justify-between gap-4">
-          <h2 className="text-3xl font-bold tracking-wide text-[#f3e3a2]">
+          <h2 className="text-3xl font-bold tracking-wide text-[#38bdf8]">
             施工事例を編集
           </h2>
 
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl border border-[#c8a63c] px-4 py-2 text-sm font-semibold text-[#f3e3a2] transition hover:bg-[#c8a63c] hover:text-black"
+            className="rounded-xl border border-[#0ea5b7] px-4 py-2 text-sm font-semibold text-[#38bdf8] transition hover:bg-[#0ea5b7] hover:text-white"
           >
             閉じる
           </button>
@@ -61,7 +61,7 @@ function EditCaseModal({
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* タイトル */}
           <div>
-            <label className="mb-2 block text-base font-semibold text-[#f3e3a2]">
+            <label className="mb-2 block text-base font-semibold text-[#38bdf8]">
               タイトル
             </label>
 
@@ -70,14 +70,14 @@ function EditCaseModal({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="タイトル"
-              className="w-full rounded-xl border border-[#c8a63c] bg-black px-4 py-4 text-base text-white placeholder:text-gray-400 outline-none"
+              className="w-full rounded-xl border border-[#0ea5b7] bg-sky-50 px-4 py-4 text-base text-slate-800 placeholder:text-gray-400 outline-none"
               disabled={loading}
             />
           </div>
 
           {/* 説明 */}
           <div>
-            <label className="mb-2 block text-base font-semibold text-[#f3e3a2]">
+            <label className="mb-2 block text-base font-semibold text-[#38bdf8]">
               説明
             </label>
 
@@ -86,7 +86,7 @@ function EditCaseModal({
               onChange={(e) => setDescription(e.target.value)}
               placeholder="説明"
               rows={4}   // ここ変更（追加モーダルと同じ高さ感）
-              className="w-full rounded-xl border border-[#c8a63c] bg-black px-4 py-4 text-base text-white placeholder:text-gray-400 outline-none"
+              className="w-full rounded-xl border border-[#0ea5b7] bg-sky-50 px-4 py-4 text-base text-slate-800 placeholder:text-gray-400 outline-none"
               disabled={loading}
             />
           </div>
@@ -102,7 +102,7 @@ function EditCaseModal({
             <button
               type="button"
               onClick={onClose}
-              className="rounded-xl border border-[#c8a63c] px-6 py-3 text-base font-semibold text-[#f3e3a2] transition hover:bg-[#c8a63c] hover:text-black"
+              className="rounded-xl border border-[#0ea5b7] px-6 py-3 text-base font-semibold text-[#38bdf8] transition hover:bg-[#0ea5b7] hover:text-white"
               disabled={loading}
             >
               キャンセル
@@ -110,7 +110,7 @@ function EditCaseModal({
 
             <button
               type="submit"
-              className="rounded-xl bg-[#d4af37] px-6 py-3 text-base font-bold text-black transition hover:brightness-105"
+              className="rounded-xl bg-[#0ea5b7] px-6 py-3 text-base font-bold text-white transition hover:brightness-105"
               disabled={loading}
             >
               {loading ? "保存中..." : "保存"}

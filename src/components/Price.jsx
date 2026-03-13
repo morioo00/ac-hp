@@ -185,17 +185,17 @@ const Price = () => {
   const animatedMax = useCountUp(total.hasAny ? total.maxSum : null, 520);
 
   return (
-    <section className="bg-black py-24">
+    <section className="bg-sky-50 py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <h2 className="mb-3 text-3xl font-bold text-white sm:text-4xl">
+        <h2 className="mb-3 text-3xl font-bold text-slate-800 sm:text-4xl">
           料金目安
         </h2>
 
-        <div className="mt-1 mb-6 h-[2px] w-full bg-[#d4af37]" />
+        <div className="mt-1 mb-6 h-[2px] w-full bg-[#0ea5b7]" />
 
-        <div className="overflow-hidden rounded-2xl border border-[#d4af37]/30">
+        <div className="overflow-hidden rounded-2xl border border-[#0ea5b7]/30">
           {/* ヘッダー */}
-          <div className="grid grid-cols-3 bg-[#d4af37] px-6 py-5 font-bold text-black">
+          <div className="grid grid-cols-3 bg-[#0ea5b7] px-6 py-5 font-bold text-white">
             <div>項目</div>
             <div className="text-center">選択内容</div>
             <div className="text-center">目安料金</div>
@@ -205,23 +205,23 @@ const Price = () => {
             const isOpen = openKey === row.key;
 
             return (
-              <div key={row.key} className="border-t border-[#d4af37]/20">
+              <div key={row.key} className="border-t border-[#0ea5b7]/20">
                 {/* 行 */}
                 <button
                   type="button"
                   onClick={() => toggleRow(row.key)}
-                  className="w-full grid grid-cols-3 px-6 py-6 bg-neutral-800 text-left hover:bg-neutral-750 transition"
+                  className="w-full grid grid-cols-3 px-6 py-6 bg-white text-left hover:bg-sky-100 transition"
                 >
                   {/* 左：項目 */}
-                  <div className="text-white font-semibold">{row.title}</div>
+                  <div className="text-slate-800 font-semibold">{row.title}</div>
 
                   {/* 中：選択ラベル */}
-                  <div className="text-center text-sm font-semibold text-[#f0dd9b] opacity-90">
+                  <div className="text-center text-sm font-semibold text-[#38bdf8] opacity-90">
                     {selected[row.key]?.label}
                   </div>
 
                   {/* 右：金額 */}
-                  <div className="justify-self-center text-white font-bold">
+                  <div className="justify-self-center text-slate-800 font-bold">
                     <span className="inline-flex items-center justify-center gap-2">
                       {selected[row.key]?.value}
                       <span
@@ -242,7 +242,7 @@ const Price = () => {
                     ${isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}
                   `}
                 >
-                  <div className="bg-neutral-900 px-6 py-6">
+                  <div className="bg-sky-50 px-6 py-6">
                     <div className="grid gap-3 sm:grid-cols-3">
                       {row.options.map((opt) => (
                         <button
@@ -253,8 +253,8 @@ const Price = () => {
                             rounded-xl border px-4 py-3 text-sm font-semibold transition
                             ${
                               selected[row.key].label === opt.label
-                                ? "border-[#d4af37] bg-[#d4af37]/10 text-[#f0dd9b]"
-                                : "border-[#d4af37]/30 bg-neutral-800 text-neutral-200 hover:bg-neutral-750"
+                                ? "border-[#0ea5b7] bg-[#0ea5b7]/10 text-[#38bdf8]"
+                                : "border-[#0ea5b7]/30 bg-white text-slate-700 hover:bg-sky-100"
                             }
                           `}
                         >
@@ -264,7 +264,7 @@ const Price = () => {
                     </div>
 
                     {row.key === "出張費" && (
-                      <p className="mt-4 text-xs text-neutral-400">
+                      <p className="mt-4 text-xs text-slate-500">
                         ※距離に応じて出張費が変動します。
                       </p>
                     )}
@@ -275,16 +275,16 @@ const Price = () => {
           })}
 
           {/* ✅ 合計（列構造を揃えて、見切れを根本解決） */}
-          <div className="border-t border-[#d4af37]/20 bg-neutral-900/70">
+          <div className="border-t border-[#0ea5b7]/20 bg-sky-50/70">
             <div className="grid grid-cols-3 px-6 py-6 items-start">
               {/* 左 */}
-              <div className="text-white font-bold">合計目安</div>
+              <div className="text-slate-800 font-bold">合計目安</div>
 
               {/* 中（空の列で揃える） */}
               <div />
 
               {/* 右：金額（右詰め・1行・自動縮小） */}
-              <div className="min-w-0 justify-self-end text-right font-extrabold text-[#f0dd9b] tracking-wide">
+              <div className="min-w-0 justify-self-end text-right font-extrabold text-[#38bdf8] tracking-wide">
                 <span className="whitespace-nowrap text-[clamp(14px,3.6vw,22px)]">
                   {total.minSum === total.maxSum
                     ? fmtYen(animatedMin)
@@ -293,7 +293,7 @@ const Price = () => {
 
                 {/* 要見積がある時だけ、( ) をスマホで改行 */}
                 {total.hasUncertain && (
-                  <span className="block sm:inline whitespace-nowrap text-xs font-semibold text-[#f0dd9b]/90 mt-1 sm:mt-0 sm:ml-2">
+                  <span className="block sm:inline whitespace-nowrap text-xs font-semibold text-[#38bdf8]/90 mt-1 sm:mt-0 sm:ml-2">
                     （※要見積項目あり）
                   </span>
                 )}
@@ -302,7 +302,7 @@ const Price = () => {
           </div>
         </div>
 
-        <div className="mt-8 space-y-2 text-sm text-neutral-300">
+        <div className="mt-8 space-y-2 text-sm text-slate-600">
           <p>※事前に内容をご説明し、ご納得いただいてから作業いたします。</p>
           <p>※追加費用が発生する場合は必ずご説明いたします。</p>
         </div>

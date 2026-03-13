@@ -27,14 +27,14 @@ const serviceMessages = {
 
 const Services = () => {
   return (
-    <section className="bg-neutral-900 py-24">
+    <section className="bg-sky-50 py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <h2 className="mb-3 text-3xl font-bold text-white sm:text-4xl">対応サービス</h2>
-        <div className="mt-1 h-[2px] w-full bg-[#d4af37]" />
+        <h2 className="mb-3 text-3xl font-bold text-slate-800 sm:text-4xl">対応サービス</h2>
+        <div className="mt-1 h-[2px] w-full bg-[#0ea5b7]" />
 
 
 
-        <p className="mb-10 max-w-3xl text-sm leading-relaxed text-neutral-300 sm:text-base">
+        <p className="mb-10 max-w-3xl text-sm leading-relaxed text-slate-600 sm:text-base">
           急な故障にも迅速に対応いたします。業務用・家庭用問わず、最適な修理・入替をご提案いたします。
           まずは現地状況を丁寧に確認し、お客様にとって無理のない進め方を一緒に考えます。
         </p>
@@ -44,13 +44,13 @@ const Services = () => {
             return (
               <div
                 key={service}
-                className="rounded-2xl border border-[#d4af37]/20 bg-neutral-800 p-6 shadow-xl transition duration-300 hover:-translate-y-1 hover:shadow-2xl"
+                className="rounded-2xl border border-[#0ea5b7]/20 bg-white p-6 shadow-xl transition duration-300 hover:-translate-y-1 hover:shadow-2xl"
               >
-                <div className="mb-4 inline-flex rounded-xl bg-black p-3 text-[#d4af37]">
+                <div className="mb-4 inline-flex rounded-xl bg-sky-50 p-3 text-[#0ea5b7]">
                   <Icon className="h-6 w-6" />
                 </div>
-                <p className="text-lg font-semibold text-white">{service}</p>
-                <p className="mt-2 text-sm leading-relaxed text-neutral-300">
+                <p className="text-lg font-semibold text-slate-800">{service}</p>
+                <p className="mt-2 text-sm leading-relaxed text-slate-600">
                   {serviceMessages[service] || "現地状況を確認し、最適な施工プランをご案内します。"}
                 </p>
               </div>

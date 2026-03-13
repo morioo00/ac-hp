@@ -22,20 +22,20 @@ const Works = () => {
   };
 
   return (
-    <section id="works" className="bg-neutral-900 py-24">
+    <section id="works" className="bg-sky-50 py-24">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <h2 className="mb-3 text-3xl font-bold text-white sm:text-4xl text-center">
+        <h2 className="mb-3 text-3xl font-bold text-slate-800 sm:text-4xl text-center">
           施工実績
         </h2>
 
-        <div className="mt-2 mb-12 h-[2px] w-full bg-[#d4af37]" />
+        <div className="mt-2 mb-12 h-[2px] w-full bg-[#0ea5b7]" />
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {siteConfig.works.map((work, index) => (
             <div
               key={index}
               onClick={() => setSelectedImage(work.image)}
-              className="group cursor-pointer overflow-hidden rounded-2xl bg-neutral-800 shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-2xl"
+              className="group cursor-pointer overflow-hidden rounded-2xl bg-white shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-2xl"
             >
               <div className="overflow-hidden">
                 <img
@@ -46,7 +46,7 @@ const Works = () => {
               </div>
 
               <div className="p-5">
-                <p className="text-sm leading-relaxed text-neutral-300 text-center">
+                <p className="text-sm leading-relaxed text-slate-600 text-center">
                   {work.comment}
                 </p>
               </div>
@@ -60,7 +60,7 @@ const Works = () => {
     onClick={closeModal}
     className={`
       fixed inset-0 z-50 flex items-center justify-center
-      bg-black/90 backdrop-blur-sm
+      bg-slate-900/65 backdrop-blur-sm
       transition-opacity duration-300
       ${isOpen ? "opacity-100" : "opacity-0"}
     `}

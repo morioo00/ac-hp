@@ -19,7 +19,7 @@ const Header = ({ isMenuOpen, setIsMenuOpen }) => {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full h-14 md:h-20 border-b border-yellow-700/20 bg-black/95 backdrop-blur">
+      <header className="sticky top-0 z-40 w-full h-14 md:h-20 border-b border-sky-300/40 bg-sky-50/95 backdrop-blur">
         <div className="flex w-full items-center justify-between px-0 py-0 md:py-2">
           {/* 左：ロゴ */}
           <Link
@@ -46,25 +46,25 @@ const Header = ({ isMenuOpen, setIsMenuOpen }) => {
             className="
               group relative z-50 h-12 w-12
               rounded-full
-              border border-[#d4af37]/40
-              bg-black/60
+              border border-[#0ea5b7]/40
+              bg-sky-50/60
               transition
-              hover:border-[#d4af37]
+              hover:border-[#0ea5b7]
               md:mr-6 lg:mr-8
             "
           >
             <span
-              className={`absolute left-1/2 top-1/2 block h-0.5 w-6 -translate-x-1/2 bg-[#f0dd9b] transition-all duration-300 ${
+              className={`absolute left-1/2 top-1/2 block h-0.5 w-6 -translate-x-1/2 bg-[#38bdf8] transition-all duration-300 ${
                 isMenuOpen ? "translate-y-0 rotate-45" : "-translate-y-2"
               }`}
             />
             <span
-              className={`absolute left-1/2 top-1/2 block h-0.5 w-6 -translate-x-1/2 bg-[#f0dd9b] transition-all duration-300 ${
+              className={`absolute left-1/2 top-1/2 block h-0.5 w-6 -translate-x-1/2 bg-[#38bdf8] transition-all duration-300 ${
                 isMenuOpen ? "opacity-0" : "opacity-100"
               }`}
             />
             <span
-              className={`absolute left-1/2 top-1/2 block h-0.5 w-6 -translate-x-1/2 bg-[#f0dd9b] transition-all duration-300 ${
+              className={`absolute left-1/2 top-1/2 block h-0.5 w-6 -translate-x-1/2 bg-[#38bdf8] transition-all duration-300 ${
                 isMenuOpen ? "translate-y-0 -rotate-45" : "translate-y-2"
               }`}
             />
@@ -73,13 +73,13 @@ const Header = ({ isMenuOpen, setIsMenuOpen }) => {
       </header>
 
       <div
-        className={`fixed inset-0 z-30 bg-black/90 backdrop-blur-sm transition-all duration-300 ${
+        className={`fixed inset-0 z-30 bg-sky-50/90 backdrop-blur-sm transition-all duration-300 ${
           isMenuOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
         }`}
         onClick={() => setIsMenuOpen(false)}
       >
         <nav
-          className={`mx-auto mt-24 flex w-[92%] max-w-3xl flex-col gap-4 rounded-2xl border border-[#d4af37]/30 bg-neutral-950/90 p-6 text-center transition-all duration-300 sm:p-8 ${
+          className={`mx-auto mt-24 flex w-[92%] max-w-3xl flex-col gap-4 rounded-2xl border border-[#0ea5b7]/30 bg-sky-100/90 p-6 text-center transition-all duration-300 sm:p-8 ${
             isMenuOpen ? "translate-y-0" : "-translate-y-8"
           }`}
           onClick={(e) => e.stopPropagation()}
@@ -89,7 +89,7 @@ const Header = ({ isMenuOpen, setIsMenuOpen }) => {
               key={item.label}
               href={item.href}
               onClick={() => setIsMenuOpen(false)}
-              className="rounded-xl border border-[#d4af37]/20 bg-black/40 px-4 py-4 text-lg font-semibold text-[#f0dd9b] transition hover:border-[#d4af37]/70 hover:bg-[#d4af37]/10"
+              className="rounded-xl border border-[#0ea5b7]/20 bg-sky-50/40 px-4 py-4 text-lg font-semibold text-[#38bdf8] transition hover:border-[#0ea5b7]/70 hover:bg-[#0ea5b7]/10"
             >
               {item.label}
             </a>

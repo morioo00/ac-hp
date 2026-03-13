@@ -338,15 +338,15 @@ function App() {
   }, []);
 
   return (
-    <div className="bg-black text-white">
+    <div className="bg-sky-50 text-slate-800">
       <Toaster
         position="top-right"
         toastOptions={{
           duration: 3000,
           style: {
-            background: "#000000",
-            color: "#f3e3a2",
-            border: "1px solid #c8a63c",
+            background: "#f0f9ff",
+            color: "#0f172a",
+            border: "1px solid #0ea5b7",
             borderRadius: "16px",
             padding: "14px 16px",
             fontSize: "14px",
@@ -356,14 +356,14 @@ function App() {
           success: {
             duration: 3000,
             iconTheme: {
-              primary: "#d4af37",
-              secondary: "#000000",
+              primary: "#0ea5b7",
+              secondary: "#f0f9ff",
             },
           },
           error: {
             duration: 4000,
             style: {
-              background: "#140909",
+              background: "#fff1f2",
               color: "#ffd6d6",
               border: "1px solid #d14b4b",
               borderRadius: "16px",
@@ -374,7 +374,7 @@ function App() {
             },
             iconTheme: {
               primary: "#ff6b6b",
-              secondary: "#140909",
+              secondary: "#fff1f2",
             },
           },
         }}
